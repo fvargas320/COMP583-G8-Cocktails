@@ -19,7 +19,7 @@ class _SettingsPageState extends State<SettingsPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text(
-              "User Favorites",
+              "User Settings",
               style: TextStyle(
                 color: Colors.black,
                 fontWeight: FontWeight.bold,
