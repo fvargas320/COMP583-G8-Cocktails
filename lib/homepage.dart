@@ -1,8 +1,9 @@
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+  const MyHomePage({Key? key}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -13,16 +14,35 @@ class MyHomePage extends StatefulWidget {
   // used by the build method of the State. Fields in a Widget subclass are
   // always marked "final".
 
-  final String title;
-
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final user = FirebaseAuth.instance.currentUser;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('WELCOME  ${user?.email}'),
+            MaterialButton(onPressed: (){
+              FirebaseAuth.instance.signOut();
+            },
+              color: Colors.deepPurpleAccent,
+              child: const Text("SIGN OUT", style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 30,
+                color: Colors.white
+              ),),
+
+            )
+          ],
+        ),
+        
+      ),
       bottomNavigationBar: Container(
         color: Colors.grey.shade900,
         child: Padding(
@@ -31,8 +51,8 @@ class _MyHomePageState extends State<MyHomePage> {
             backgroundColor: Colors.grey.shade900,
             color: Colors.white,
             activeColor: Colors.white,
-            tabBackgroundColor: Colors.purple.shade200,
-            padding: EdgeInsets.all(20),
+            tabBackgroundColor: Colors.deepPurple,
+            padding: const EdgeInsets.all(20),
             gap: 8,
             onTabChange: (index){
               print(index);
@@ -51,4 +71,5 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
+
 }
