@@ -1,5 +1,7 @@
+import 'package:drinkly_cocktails/Pages/register_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 
 import 'forgot_password_page.dart';
 
@@ -9,24 +11,22 @@ class LoginPage extends StatefulWidget {
 
   @override
   State<LoginPage> createState() => _LoginPageState();
-
 }
 
-class _LoginPageState extends State<LoginPage>{
-
+class _LoginPageState extends State<LoginPage> {
   //controller for text fields
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
-  Future signIn() async{
+  Future signIn() async {
     await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: _emailController.text.trim(),
-        password: _passwordController.text.trim(),
+      email: _emailController.text.trim(),
+      password: _passwordController.text.trim(),
     );
   }
 
   @override
-  void dispose(){
+  void dispose() {
     //Implement dispose
     _emailController.dispose();
     _passwordController.dispose();
@@ -34,7 +34,7 @@ class _LoginPageState extends State<LoginPage>{
   }
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[300],
       body: SafeArea(
@@ -42,92 +42,97 @@ class _LoginPageState extends State<LoginPage>{
           child: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              children:  [
-                const Icon(Icons.local_drink_rounded, size: 200, color: Colors.deepPurple ,),
+              children: [
+                const Icon(
+                  Icons.local_drink_rounded,
+                  size: 200,
+                  color: Colors.deepPurple,
+                ),
                 const SizedBox(height: 20),
 
                 //Hello
-              const Text("Welcome to Drinkly", style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 30,
-                ),
-              ),
-              const SizedBox(height: 10),
-              const Text(
-                "Discover Amazing Cocktails"
-                , style: TextStyle(
-                  fontSize: 18,
-                ),
-              ),
-              const SizedBox(height: 45),
-
-              //Email Text
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25.0 ),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    border: Border.all(color: Colors.white),
-                    borderRadius: BorderRadius.circular(14)
+                const Text(
+                  "Welcome to Drinkly",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 30,
                   ),
-                  child:  Padding(
-                    padding: const EdgeInsets.only(left: 2.0),
-                    child: TextField(
-                      controller: _emailController,
-                      decoration:  InputDecoration(
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.deepPurple),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
+                ),
+                const SizedBox(height: 10),
+                const Text(
+                  "Discover Amazing Cocktails",
+                  style: TextStyle(
+                    fontSize: 18,
+                  ),
+                ),
+                const SizedBox(height: 45),
 
-                        prefixIcon: Icon(Icons.person),
-                        prefixIconColor: Colors.deepPurple,
-                        border: InputBorder.none ,
-                        hintText: "Email Address",
-                      ) ,
+                //Email Text
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                        color: Colors.grey[200],
+                        border: Border.all(color: Colors.white),
+                        borderRadius: BorderRadius.circular(14)),
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 2.0),
+                      child: TextField(
+                        controller: _emailController,
+                        decoration: InputDecoration(
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(color: Colors.white),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide:
+                                const BorderSide(color: Colors.deepPurple),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          prefixIcon: const Icon(Icons.person),
+                          prefixIconColor: Colors.deepPurple,
+                          border: InputBorder.none,
+                          hintText: "Email Address",
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
 
-              const SizedBox(height: 25),
+                const SizedBox(height: 25),
 
-              //Password Text
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25.0 ),
-                child: Container(
-                  decoration: BoxDecoration(
-                      color: Colors.grey[200],
-                      border: Border.all(color: Colors.white),
-                      borderRadius: BorderRadius.circular(14)
-                  ),
-                  child:  Padding(
-                    padding: const EdgeInsets.only(left: 2.0),
-                    child: TextField(
-                      controller: _passwordController,
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white),
-                          borderRadius: BorderRadius.circular(12),
+                //Password Text
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                        color: Colors.grey[200],
+                        border: Border.all(color: Colors.white),
+                        borderRadius: BorderRadius.circular(14)),
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 2.0),
+                      child: TextField(
+                        controller: _passwordController,
+                        obscureText: true,
+                        decoration: InputDecoration(
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(color: Colors.white),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide:
+                                const BorderSide(color: Colors.deepPurple),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          prefixIcon: const Icon(Icons.lock_rounded),
+                          prefixIconColor: Colors.deepPurple,
+                          border: InputBorder.none,
+                          hintText: "Password",
                         ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.deepPurple),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        prefixIcon: Icon(Icons.lock_rounded),
-                        prefixIconColor: Colors.deepPurple,
-                        border: InputBorder.none ,
-                        hintText: "Password",
-                      ) ,
+                      ),
                     ),
                   ),
                 ),
-              ),
 
                 //const SizedBox(height: 20),
 
@@ -138,71 +143,74 @@ class _LoginPageState extends State<LoginPage>{
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       GestureDetector(
-                        onTap: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context) {
-                            return const ForgotPasswordPage();
-                          },
-                          ),
-                          );
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              PageTransition(
+                                  type: PageTransitionType.fade,
+                                  child: const ForgotPasswordPage()));
                         },
-
                         child: const Text("Forgot Password?",
                             style: TextStyle(
                                 color: Colors.blue,
-                            fontWeight: FontWeight.bold
-                            )),
+                                fontWeight: FontWeight.bold)),
                       ),
                     ],
                   ),
                 ),
 
-              const SizedBox(height: 25),
+                const SizedBox(height: 25),
 
-              //Sign in button
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25),
-                child: GestureDetector(
-                  onTap: signIn,
-                  child: Container(
-                    padding: const EdgeInsets.all(25),
-                    decoration:  BoxDecoration(
-                      color: Colors.deepPurple,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: const Center(
-                      child: Text("Sign In",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 19,
+                //Sign in button
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25),
+                  child: GestureDetector(
+                    onTap: signIn,
+                    child: Container(
+                      padding: const EdgeInsets.all(25),
+                      decoration: BoxDecoration(
+                        color: Colors.deepPurple,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: const Center(
+                        child: Text(
+                          "Sign In",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 19,
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
-              ),
 
-              const SizedBox(height: 25),
-              
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children:  [
-                  Text("Not a member? ", style: TextStyle(fontWeight: FontWeight.bold),),
-                  GestureDetector(
-                    onTap: widget.showRegisterPage,
-                      child: Text("Register Now", style: TextStyle(color: Colors.blue,
-                          fontWeight: FontWeight.bold),)
-                  )
-                ],
-              ),
+                const SizedBox(height: 25),
 
-              //Register Button
-            ],
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      "Not a member? ",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    GestureDetector(
+                        onTap: widget.showRegisterPage,
+                        child: const Text(
+                          "Register Now",
+                          style: TextStyle(
+                              color: Colors.blue, fontWeight: FontWeight.bold),
+                        ))
+                  ],
+                ),
+
+                //Register Button
+              ],
             ),
           ),
         ),
       ),
-
     );
   }
 }

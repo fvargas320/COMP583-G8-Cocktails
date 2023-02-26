@@ -10,14 +10,13 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-
   //controller for text fields
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
-  Future signUp() async{
-    if(passwordsMatch()){
+  Future signUp() async {
+    if (passwordsMatch()) {
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
@@ -25,18 +24,17 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
-  bool passwordsMatch(){
-    if(_passwordController.text.trim() ==
-        _confirmPasswordController.text.trim()){
+  bool passwordsMatch() {
+    if (_passwordController.text.trim() ==
+        _confirmPasswordController.text.trim()) {
       return true;
-    }
-    else{
+    } else {
       return false;
     }
   }
 
   @override
-  void dispose(){
+  void dispose() {
     //Implement dispose
     _emailController.dispose();
     _passwordController.dispose();
@@ -52,35 +50,40 @@ class _RegisterPageState extends State<RegisterPage> {
           child: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              children:  [
-                const Icon(Icons.local_drink_rounded, size: 200, color: Colors.deepPurple ,),
+              children: [
+                const Icon(
+                  Icons.local_drink_rounded,
+                  size: 200,
+                  color: Colors.deepPurple,
+                ),
                 const SizedBox(height: 20),
 
                 //Hello
-                const Text("Register", style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 30,
-                ),
+                const Text(
+                  "Register",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 30,
+                  ),
                 ),
                 const SizedBox(height: 10),
                 const Text(
-                  "Enter your details below."
-                  , style: TextStyle(
-                  fontSize: 18,
-                ),
+                  "Enter your details below.",
+                  style: TextStyle(
+                    fontSize: 18,
+                  ),
                 ),
                 const SizedBox(height: 45),
 
                 //Email Text
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 25.0 ),
+                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
                   child: Container(
                     decoration: BoxDecoration(
                         color: Colors.grey[200],
                         border: Border.all(color: Colors.white),
-                        borderRadius: BorderRadius.circular(14)
-                    ),
-                    child:  Padding(
+                        borderRadius: BorderRadius.circular(14)),
+                    child: Padding(
                       padding: const EdgeInsets.only(left: 2.0),
                       child: TextField(
                         controller: _emailController,
@@ -95,9 +98,9 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                           prefixIcon: Icon(Icons.person),
                           prefixIconColor: Colors.deepPurple,
-                          border: InputBorder.none ,
+                          border: InputBorder.none,
                           hintText: "Email Address",
-                        ) ,
+                        ),
                       ),
                     ),
                   ),
@@ -107,14 +110,13 @@ class _RegisterPageState extends State<RegisterPage> {
 
                 //Password Text
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 25.0 ),
+                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
                   child: Container(
                     decoration: BoxDecoration(
                         color: Colors.grey[200],
                         border: Border.all(color: Colors.white),
-                        borderRadius: BorderRadius.circular(14)
-                    ),
-                    child:  Padding(
+                        borderRadius: BorderRadius.circular(14)),
+                    child: Padding(
                       padding: const EdgeInsets.only(left: 2.0),
                       child: TextField(
                         controller: _passwordController,
@@ -130,27 +132,25 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                           prefixIcon: Icon(Icons.lock_rounded),
                           prefixIconColor: Colors.deepPurple,
-                          border: InputBorder.none ,
+                          border: InputBorder.none,
                           hintText: "Password",
-                        ) ,
+                        ),
                       ),
                     ),
                   ),
                 ),
 
-
                 const SizedBox(height: 25),
 
                 //Confirm Password Text
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 25.0 ),
+                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
                   child: Container(
                     decoration: BoxDecoration(
                         color: Colors.grey[200],
                         border: Border.all(color: Colors.white),
-                        borderRadius: BorderRadius.circular(14)
-                    ),
-                    child:  Padding(
+                        borderRadius: BorderRadius.circular(14)),
+                    child: Padding(
                       padding: const EdgeInsets.only(left: 2.0),
                       child: TextField(
                         controller: _confirmPasswordController,
@@ -166,9 +166,9 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                           prefixIcon: Icon(Icons.lock_clock_rounded),
                           prefixIconColor: Colors.deepPurple,
-                          border: InputBorder.none ,
+                          border: InputBorder.none,
                           hintText: "Confirm Password",
-                        ) ,
+                        ),
                       ),
                     ),
                   ),
@@ -183,12 +183,13 @@ class _RegisterPageState extends State<RegisterPage> {
                     onTap: signUp,
                     child: Container(
                       padding: const EdgeInsets.all(25),
-                      decoration:  BoxDecoration(
+                      decoration: BoxDecoration(
                         color: Colors.deepPurple,
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: const Center(
-                        child: Text("Register",
+                        child: Text(
+                          "Register",
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -204,12 +205,18 @@ class _RegisterPageState extends State<RegisterPage> {
 
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children:  [
-                    const Text("Already a member? ", style: TextStyle(fontWeight: FontWeight.bold),),
+                  children: [
+                    const Text(
+                      "Already a member? ",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                     GestureDetector(
                         onTap: widget.showLoginPage,
-                        child: const Text("Sign In", style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),)
-                    )
+                        child: const Text(
+                          "Sign In",
+                          style: TextStyle(
+                              color: Colors.blue, fontWeight: FontWeight.bold),
+                        ))
                   ],
                 ),
 
@@ -219,6 +226,6 @@ class _RegisterPageState extends State<RegisterPage> {
           ),
         ),
       ),
-
-    );  }
+    );
+  }
 }

@@ -1,7 +1,13 @@
-
+import 'package:drinkly_cocktails/Pages/NavigationPages/user_homepage.dart';
+import 'package:drinkly_cocktails/Pages/NavigationPages/user_recommend.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:page_transition/page_transition.dart';
+
+import 'NavigationPages/user_favorites.dart';
+import 'NavigationPages/user_settings.dart';
+
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
 
@@ -20,28 +26,28 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final user = FirebaseAuth.instance.currentUser;
+  int _selectedIndex = 0;
+  static const List<Widget> _widgetOptions = <Widget>[
+    UserHomepage(),
+    UserRecommendPage(),
+    FavoritesPage(),
+    SettingsPage(),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('WELCOME  ${user?.email}'),
-            MaterialButton(onPressed: (){
-              FirebaseAuth.instance.signOut();
-            },
-              color: Colors.deepPurpleAccent,
-              child: const Text("SIGN OUT", style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 30,
-                color: Colors.white
-              ),),
-
-            )
-          ],
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        elevation: 10,
+        backgroundColor: Colors.grey.shade900,
+        title: const Text(
+          'Drinkly: We can remove this bar if not needed',
+          style: TextStyle(fontSize: 14),
         ),
-        
+      ),
+      body: Center(
+        child: _widgetOptions.elementAt(_selectedIndex),
       ),
       bottomNavigationBar: Container(
         color: Colors.grey.shade900,
@@ -54,22 +60,34 @@ class _MyHomePageState extends State<MyHomePage> {
             tabBackgroundColor: Colors.deepPurple,
             padding: const EdgeInsets.all(20),
             gap: 8,
-            onTabChange: (index){
+            onTabChange: (index) {
               print(index);
+
+              setState(() {
+                _selectedIndex = index;
+              });
             },
             tabs: const [
               GButton(
                 icon: Icons.home,
                 text: "Home",
               ),
-              GButton(icon: Icons.search, text: "Search",),
-              GButton(icon: Icons.list_alt_rounded, text: "Likes",),
-              GButton(icon: Icons.settings, text: "Settings",),
+              GButton(
+                icon: Icons.search,
+                text: "Search",
+              ),
+              GButton(
+                icon: Icons.list_alt_rounded,
+                text: "Likes",
+              ),
+              GButton(
+                icon: Icons.settings,
+                text: "Settings",
+              ),
             ],
           ),
         ),
       ),
     );
   }
-
 }
