@@ -1,10 +1,7 @@
-
-
-import 'package:drinkly_cocktails/homepage.dart';
-import 'package:drinkly_cocktails/login_page.dart';
+import 'package:drinkly_cocktails/Pages/homepage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'auth_page.dart';
 
 class MainPage extends StatelessWidget {
   const MainPage ({Key?  key}) : super(key: key);
@@ -20,7 +17,7 @@ class MainPage extends StatelessWidget {
           }
 
           else{
-            return const LoginPage();
+            return const AuthPage();
           }
         },
       ),
