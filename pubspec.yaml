@@ -39,6 +39,8 @@ dependencies:
   firebase_auth: ^4.2.9
   firebase_core: ^2.7.0
   page_transition: ^2.0.9
+  http: ^0.13.5
+
 
 
 dev_dependencies:
