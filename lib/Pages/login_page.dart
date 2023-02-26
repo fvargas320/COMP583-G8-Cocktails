@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import 'forgot_password_page.dart';
+
 class LoginPage extends StatefulWidget {
   final VoidCallback showRegisterPage;
   const LoginPage({Key? key, required this.showRegisterPage}) : super(key: key);
@@ -72,7 +74,16 @@ class _LoginPageState extends State<LoginPage>{
                     padding: const EdgeInsets.only(left: 2.0),
                     child: TextField(
                       controller: _emailController,
-                      decoration: const InputDecoration(
+                      decoration:  InputDecoration(
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.deepPurple),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+
                         prefixIcon: Icon(Icons.person),
                         prefixIconColor: Colors.deepPurple,
                         border: InputBorder.none ,
@@ -99,7 +110,15 @@ class _LoginPageState extends State<LoginPage>{
                     child: TextField(
                       controller: _passwordController,
                       obscureText: true,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.deepPurple),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                         prefixIcon: Icon(Icons.lock_rounded),
                         prefixIconColor: Colors.deepPurple,
                         border: InputBorder.none ,
@@ -109,6 +128,33 @@ class _LoginPageState extends State<LoginPage>{
                   ),
                 ),
               ),
+
+                //const SizedBox(height: 20),
+
+                //Forgot password
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      GestureDetector(
+                        onTap: (){
+                          Navigator.push(context, MaterialPageRoute(builder: (context) {
+                            return const ForgotPasswordPage();
+                          },
+                          ),
+                          );
+                        },
+
+                        child: const Text("Forgot Password?",
+                            style: TextStyle(
+                                color: Colors.blue,
+                            fontWeight: FontWeight.bold
+                            )),
+                      ),
+                    ],
+                  ),
+                ),
 
               const SizedBox(height: 25),
 
@@ -144,7 +190,8 @@ class _LoginPageState extends State<LoginPage>{
                   Text("Not a member? ", style: TextStyle(fontWeight: FontWeight.bold),),
                   GestureDetector(
                     onTap: widget.showRegisterPage,
-                      child: Text("Register Now", style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),)
+                      child: Text("Register Now", style: TextStyle(color: Colors.blue,
+                          fontWeight: FontWeight.bold),)
                   )
                 ],
               ),
