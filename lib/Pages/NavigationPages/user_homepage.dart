@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:drinkly_cocktails/data_model/cocktail.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:like_button/like_button.dart';
 import 'package:page_transition/page_transition.dart';
 
 import '../CocktailPages/cocktail_card_page.dart';
@@ -82,15 +83,13 @@ class _UserHomepageState extends State<UserHomepage>
               itemCount: cocktails.length,
               itemBuilder: (context, index) {
                 return Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(10.0),
                   child: Container(
                     decoration: BoxDecoration(
                       color: Colors.blueAccent,
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: ListTile(
-                      title: Text(cocktails[index].strDrink),
-                      subtitle: Text(cocktails[index].strInstructions),
+                    child: GestureDetector(
                       onTap: () {
                         Navigator.push(
                             context,
@@ -99,9 +98,88 @@ class _UserHomepageState extends State<UserHomepage>
                                 child: CocktailCardPage(
                                     cocktail: cocktails[index])));
                       },
-                      //() => {
-                      //print(Text(cocktails[index].idDrink));
-                      //},
+                      child: Column(
+                        children: [
+                          Image.network(
+                            cocktails[index].strDrinkThumb,
+                            fit: BoxFit.cover,
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 15.0, vertical: 10),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: const [
+                                Icon(Icons.local_drink),
+                                Text(
+                                  "Tequila",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                SizedBox(
+                                  width: 15,
+                                ),
+                                Icon(Icons.fastfood),
+                                Text(
+                                  "Flavor",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                SizedBox(
+                                  width: 15,
+                                ),
+                                Icon(Icons.power),
+                                Text(
+                                  "Weak",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                SizedBox(
+                                  width: 15,
+                                ),
+                                Icon(Icons.list_alt_rounded),
+                                Text(
+                                  "2 Ingredients",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ],
+                            ),
+                          ),
+                          ListTile(
+                            title: Center(
+                              child: Text(
+                                cocktails[index].strDrink,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 20),
+                              ),
+                            ),
+                            //subtitle: Text(cocktails[index].strInstructions),
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  PageTransition(
+                                      type: PageTransitionType.fade,
+                                      child: CocktailCardPage(
+                                          cocktail: cocktails[index])));
+                            },
+                          ),
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 15.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: const [
+                                LikeButton(
+                                  likeCount: 1,
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 );

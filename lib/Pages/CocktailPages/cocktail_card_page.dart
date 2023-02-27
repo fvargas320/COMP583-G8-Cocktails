@@ -73,7 +73,7 @@ class CocktailCardPage extends StatelessWidget {
               const Text(
                 "Recipe Instructions",
                 style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
+                textAlign: TextAlign.left,
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 15.0),
@@ -93,7 +93,7 @@ class CocktailCardPage extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const LikeButton(
+              LikeButton(
                 likeCount: 1,
               ),
               const SizedBox(
