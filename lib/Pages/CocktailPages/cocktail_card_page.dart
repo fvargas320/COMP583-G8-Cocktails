@@ -24,9 +24,14 @@ class CocktailCardPage extends StatelessWidget {
       body: ListView(
         scrollDirection: Axis.vertical,
         children: [
+          const SizedBox(
+            height: 10,
+          ),
           Image.network(
             cocktail.strDrinkThumb,
-            fit: BoxFit.cover,
+            height: 400,
+            width: 400,
+            //fit: BoxFit.fitHeight,
           ),
           const SizedBox(
             height: 10,
