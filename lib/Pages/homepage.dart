@@ -42,7 +42,7 @@ class _MyHomePageState extends State<MyHomePage> {
         elevation: 10,
         backgroundColor: Colors.grey.shade900,
         title: const Text(
-          'Drinkly: We can remove this bar if not needed',
+          'Drinkly',
           style: TextStyle(fontSize: 14),
         ),
       ),
