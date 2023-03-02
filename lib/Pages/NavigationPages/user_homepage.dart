@@ -69,6 +69,9 @@ class _UserHomepageState extends State<UserHomepage>
 
   @override
   Widget build(BuildContext context) => Scaffold(
+        appBar: AppBar(
+          title: Text("Home"),
+        ),
         body: SingleChildScrollView(
           scrollDirection: Axis.vertical,
           child: Column(
@@ -242,8 +245,8 @@ class _UserHomepageState extends State<UserHomepage>
 
   Widget buildCard(int index) => Container(
         decoration: BoxDecoration(
-            border: Border.all(color: Colors.blue),
-            color: Colors.blue,
+            //border: Border.all(color: Colors.blue),
+            //color: Colors.blue,
             borderRadius: BorderRadius.circular(20)),
         //height: 200,
 
