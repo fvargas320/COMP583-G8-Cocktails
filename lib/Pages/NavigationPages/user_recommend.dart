@@ -12,25 +12,29 @@ class FinderPage extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: Text("Finder"),
+          backgroundColor: Colors.grey.shade900,
         ),
         body: Column(
           children: [
-            TabBar(labelColor: Colors.black87, tabs: [
-              Tab(
-                text: "Recommendations",
-                icon: Icon(
-                  Icons.recommend_outlined,
-                  color: Colors.blue,
-                ),
-              ),
-              Tab(
-                text: "Search",
-                icon: Icon(
-                  Icons.search,
-                  color: Colors.blue,
-                ),
-              ),
-            ]),
+            TabBar(
+                labelColor: Colors.black87,
+                indicatorColor: Colors.deepPurpleAccent,
+                tabs: [
+                  Tab(
+                    text: "Recommendations",
+                    icon: Icon(
+                      Icons.recommend_outlined,
+                      color: Colors.deepPurple,
+                    ),
+                  ),
+                  Tab(
+                    text: "Search",
+                    icon: Icon(
+                      Icons.search,
+                      color: Colors.deepPurple,
+                    ),
+                  ),
+                ]),
             Expanded(
               child: TabBarView(children: [
                 FinderFirstTab(),

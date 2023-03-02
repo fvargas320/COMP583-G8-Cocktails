@@ -13,6 +13,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Likes"),
+        backgroundColor: Colors.grey.shade900,
       ),
       body: Center(
           child: Text(

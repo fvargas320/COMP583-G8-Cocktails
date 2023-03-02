@@ -71,6 +71,7 @@ class _UserHomepageState extends State<UserHomepage>
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
           title: Text("Home"),
+          backgroundColor: Colors.grey.shade900,
         ),
         body: SingleChildScrollView(
           scrollDirection: Axis.vertical,
