@@ -117,32 +117,38 @@ class _UserHomepageState extends State<UserHomepage>
                     if (snapshot.connectionState == ConnectionState.done) {
                       return Column(
                         children: [
-                          Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "Popular Cocktails",
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        PageTransition(
-                                            type: PageTransitionType.fade,
-                                            child: GridCocktails(
-                                                cocktail_list: cocktails)));
-                                  },
-                                  child: Text(
-                                    "View All",
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 10.0),
+                            child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Popular Cocktails",
                                     style: TextStyle(
-                                        fontSize: 15, color: Colors.redAccent),
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
-                                ),
-                              ]),
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          PageTransition(
+                                              type: PageTransitionType.fade,
+                                              child: GridCocktails(
+                                                  cocktail_list: cocktails)));
+                                    },
+                                    child: Text(
+                                      "View All",
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          color: Colors.redAccent),
+                                    ),
+                                  ),
+                                ]),
+                          ),
                           Container(
                             height: 400,
                             child: GridView.builder(

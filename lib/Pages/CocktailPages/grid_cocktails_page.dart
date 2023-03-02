@@ -27,16 +27,32 @@ class _GridCocktailsState extends State<GridCocktails> {
             elevation: 5,
           ),
         ),
-        body: GridView.builder(
-          gridDelegate:
-              SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-          padding: EdgeInsets.all(14),
-          scrollDirection: Axis.vertical,
-          itemCount: widget.cocktail_list.length,
-          //itemBuilder: (context, index) => buildCard(),
-          itemBuilder: (context, index) => Padding(
-            padding: const EdgeInsets.all(5.0),
-            child: buildCard(index),
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              GridView.builder(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2),
+                padding: EdgeInsets.all(14),
+                scrollDirection: Axis.vertical,
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+
+                itemCount: widget.cocktail_list.length,
+                //itemBuilder: (context, index) => buildCard(),
+                itemBuilder: (context, index) => Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: buildCard(index),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Text(
+                  "--End of Results--",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+              )
+            ],
           ),
         ),
       );
