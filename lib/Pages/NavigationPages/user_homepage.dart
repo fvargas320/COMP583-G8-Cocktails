@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:drinkly_cocktails/data_model/cocktail.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:like_button/like_button.dart';
@@ -18,6 +19,8 @@ class UserHomepage extends StatefulWidget {
 
 class _UserHomepageState extends State<UserHomepage>
     with SingleTickerProviderStateMixin {
+  final user = FirebaseAuth.instance.currentUser;
+
   late AnimationController _controller;
 
   List<Cocktail> cocktails = [];
@@ -70,53 +73,93 @@ class _UserHomepageState extends State<UserHomepage>
           scrollDirection: Axis.vertical,
           child: Column(
             children: [
+              Text(
+                'Welcome,  ${user?.email}',
+                style: const TextStyle(
+                    fontSize: 20,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold),
+              ),
               SizedBox(
                 height: 10,
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Popular Cocktails",
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              PageTransition(
-                                  type: PageTransitionType.fade,
-                                  child: GridCocktails()));
-                        },
-                        child: Text(
-                          "View All",
-                          style:
-                              TextStyle(fontSize: 15, color: Colors.redAccent),
-                        ),
-                      ),
-                    ]),
+                // child: Row(
+                //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //     children: [
+                //       Text(
+                //         "Popular Cocktails",
+                //         style: TextStyle(
+                //           fontSize: 20,
+                //           fontWeight: FontWeight.bold,
+                //         ),
+                //       ),
+                //       GestureDetector(
+                //         onTap: () {
+                //           Navigator.push(
+                //               context,
+                //               PageTransition(
+                //                   type: PageTransitionType.fade,
+                //                   child: GridCocktails()));
+                //         },
+                //         child: Text(
+                //           "View All",
+                //           style:
+                //               TextStyle(fontSize: 15, color: Colors.redAccent),
+                //         ),
+                //       ),
+                //     ]),
               ), //Popular Cocktails
               FutureBuilder(
                   future: getCocktails("martini"),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.done) {
-                      return Container(
-                        height: 250,
-                        child: ListView.separated(
-                          padding: EdgeInsets.all(14),
-                          scrollDirection: Axis.horizontal,
-                          itemCount: cocktails.length,
-                          separatorBuilder: (context, _) => SizedBox(
-                            width: 12,
+                      return Column(
+                        children: [
+                          Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Popular Cocktails",
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        PageTransition(
+                                            type: PageTransitionType.fade,
+                                            child: GridCocktails(
+                                                cocktail_list: cocktails)));
+                                  },
+                                  child: Text(
+                                    "View All",
+                                    style: TextStyle(
+                                        fontSize: 15, color: Colors.redAccent),
+                                  ),
+                                ),
+                              ]),
+                          Container(
+                            height: 400,
+                            child: GridView.builder(
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 2),
+                              padding: EdgeInsets.all(14),
+                              scrollDirection: Axis.horizontal,
+                              itemCount: cocktails.length,
+                              //itemBuilder: (context, index) => buildCard(),
+                              itemBuilder: (context, index) => Padding(
+                                padding: const EdgeInsets.all(5.0),
+                                child: buildCard(index),
+                              ),
+                            ),
                           ),
-                          //itemBuilder: (context, index) => buildCard(),
-                          itemBuilder: (context, index) => buildCard(index),
-                        ),
+                        ],
                       );
                     } else {
                       return const Center(
@@ -136,39 +179,25 @@ class _UserHomepageState extends State<UserHomepage>
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              PageTransition(
-                                  type: PageTransitionType.fade,
-                                  child: GridCocktails()));
-                        },
-                        child: Text(
-                          "View All",
-                          style:
-                              TextStyle(fontSize: 15, color: Colors.redAccent),
-                        ),
-                      ),
                     ]),
               ), //Popular Cocktails
-              FutureBuilder(
-                  future: getCocktails("margarita"),
-                  builder: (context, snapshot) {
-                    return Container(
-                      height: 250,
-                      child: ListView.separated(
-                        padding: EdgeInsets.all(14),
-                        scrollDirection: Axis.horizontal,
-                        itemCount: cocktails.length,
-                        separatorBuilder: (context, _) => SizedBox(
-                          width: 12,
-                        ),
-                        //itemBuilder: (context, index) => buildCard(),
-                        itemBuilder: (context, index) => buildCard(index),
-                      ),
-                    );
-                  }),
+              // FutureBuilder(
+              //     future: getCocktails("margarita"),
+              //     builder: (context, snapshot) {
+              //       return Container(
+              //         height: 250,
+              //         child: ListView.separated(
+              //           padding: EdgeInsets.all(14),
+              //           scrollDirection: Axis.horizontal,
+              //           itemCount: cocktails.length,
+              //           separatorBuilder: (context, _) => SizedBox(
+              //             width: 12,
+              //           ),
+              //           //itemBuilder: (context, index) => buildCard(),
+              //           itemBuilder: (context, index) => buildCard(index),
+              //         ),
+              //       );
+              //     }),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10.0),
                 child: Row(
@@ -181,47 +210,37 @@ class _UserHomepageState extends State<UserHomepage>
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              PageTransition(
-                                  type: PageTransitionType.fade,
-                                  child: GridCocktails()));
-                        },
-                        child: Text(
-                          "View All",
-                          style:
-                              TextStyle(fontSize: 15, color: Colors.redAccent),
-                        ),
-                      ),
                     ]),
               ), //Popular Cocktails
-              FutureBuilder(
-                  future: getCocktails("margarita"),
-                  builder: (context, snapshot) {
-                    return Container(
-                      height: 250,
-                      child: ListView.separated(
-                        padding: EdgeInsets.all(14),
-                        scrollDirection: Axis.horizontal,
-                        itemCount: cocktails.length,
-                        separatorBuilder: (context, _) => SizedBox(
-                          width: 12,
-                        ),
-                        //itemBuilder: (context, index) => buildCard(),
-                        itemBuilder: (context, index) => buildCard(index),
-                      ),
-                    );
-                  }),
+              // FutureBuilder(
+              //     future: getCocktails("margarita"),
+              //     builder: (context, snapshot) {
+              //       return Container(
+              //         height: 250,
+              //         child: ListView.separated(
+              //           padding: EdgeInsets.all(14),
+              //           scrollDirection: Axis.horizontal,
+              //           itemCount: cocktails.length,
+              //           separatorBuilder: (context, _) => SizedBox(
+              //             width: 12,
+              //           ),
+              //           //itemBuilder: (context, index) => buildCard(),
+              //           itemBuilder: (context, index) => buildCard(index),
+              //         ),
+              //       );
+              //     }),
             ],
           ),
         ),
       );
 
   Widget buildCard(int index) => Container(
-        height: 200,
-        color: Colors.lightBlueAccent,
+        decoration: BoxDecoration(
+            border: Border.all(color: Colors.blue),
+            color: Colors.blue,
+            borderRadius: BorderRadius.circular(20)),
+        //height: 200,
+
         child: Column(
           children: [
             Expanded(
@@ -245,48 +264,53 @@ class _UserHomepageState extends State<UserHomepage>
                 ),
               ),
             ), //Pic
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                //Icon(Icons.local_drink),
-                Container(
-                  child: Image.asset('lib/icons/bottle.png'),
-                ),
-                Text(
-                  "Tequila",
-                  style: TextStyle(color: Colors.white, fontSize: 14),
-                ),
-                SizedBox(
-                  width: 15,
-                ),
-
-                Icon(Icons.fastfood),
-                Text(
-                  "Flavor",
-                  style: TextStyle(color: Colors.white, fontSize: 14),
-                ),
-                SizedBox(
-                  width: 15,
-                ),
-                Icon(Icons.fastfood),
-
-                Text(
-                  "Weak",
-                  style: TextStyle(color: Colors.white, fontSize: 14),
-                ),
-                // SizedBox(
-                //   width: 15,
-                // ),
-                // Icon(Icons.list_alt_rounded),
-                // Text(
-                //   "2 Ingredients",
-                //   style: TextStyle(color: Colors.white, fontSize: 14),
-                // ),
-              ],
-            ), //Icons
+            // Row(
+            //   //crossAxisAlignment: CrossAxisAlignment.stretch,
+            //   mainAxisAlignment: MainAxisAlignment.center,
+            //
+            //   children: [
+            //     //Icon(Icons.local_drink),
+            //     Container(
+            //       child: Image.asset('lib/icons/bottle.png'),
+            //     ),
+            //     Text(
+            //       "Tequila",
+            //       style: TextStyle(color: Colors.white, fontSize: 14),
+            //     ),
+            //     SizedBox(
+            //       width: 15,
+            //     ),
+            //
+            //     Icon(Icons.fastfood),
+            //     Text(
+            //       "Flavor",
+            //       style: TextStyle(color: Colors.white, fontSize: 14),
+            //     ),
+            //     SizedBox(
+            //       width: 15,
+            //     ),
+            //     Icon(Icons.fastfood),
+            //
+            //     Text(
+            //       "Weak",
+            //       style: TextStyle(color: Colors.white, fontSize: 14),
+            //     ),
+            //     // SizedBox(
+            //     //   width: 15,
+            //     // ),
+            //     // Icon(Icons.list_alt_rounded),
+            //     // Text(
+            //     //   "2 Ingredients",
+            //     //   style: TextStyle(color: Colors.white, fontSize: 14),
+            //     // ),
+            //   ],
+            // ), //Icons
             Text(
               cocktails[index].strDrink,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  color: Colors.black87),
             ), //Cocktail Name
           ],
         ),
