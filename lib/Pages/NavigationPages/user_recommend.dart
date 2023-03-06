@@ -22,10 +22,12 @@ class FinderPage extends StatelessWidget {
                 tabs: [
                   Tab(
                     text: "Recommendations",
-                    icon: Icon(
-                      Icons.recommend_outlined,
+                    icon: Image.asset(
+                      'assets/icons/recommend.png',
+                      scale: 4,
                       color: Colors.deepPurple,
                     ),
+                    // Image.asset('lib/icons/bottle.png')
                   ),
                   Tab(
                     text: "Search",

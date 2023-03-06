@@ -67,7 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 _selectedIndex = index;
               });
             },
-            tabs: const [
+            tabs: [
               GButton(
                 icon: Icons.home,
                 text: "Home",

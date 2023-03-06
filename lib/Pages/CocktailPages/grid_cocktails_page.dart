@@ -58,12 +58,6 @@ class _GridCocktailsState extends State<GridCocktails> {
       );
 
   Widget buildCard(int index) => Container(
-        decoration: BoxDecoration(
-            border: Border.all(color: Colors.blue),
-            color: Colors.blue,
-            borderRadius: BorderRadius.circular(20)),
-        //height: 200,
-
         child: Column(
           children: [
             Expanded(
@@ -89,12 +83,14 @@ class _GridCocktailsState extends State<GridCocktails> {
               ),
             ), //Pic
 
-            Text(
-              widget.cocktail_list[index].strDrink,
-              style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                  color: Colors.black87),
+            FittedBox(
+              child: Text(
+                widget.cocktail_list[index].strDrink,
+                style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    color: Colors.black87),
+              ),
             ), //Cocktail Name
           ],
         ),

@@ -87,36 +87,9 @@ class _UserHomepageState extends State<UserHomepage>
               SizedBox(
                 height: 10,
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                // child: Row(
-                //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //     children: [
-                //       Text(
-                //         "Popular Cocktails",
-                //         style: TextStyle(
-                //           fontSize: 20,
-                //           fontWeight: FontWeight.bold,
-                //         ),
-                //       ),
-                //       GestureDetector(
-                //         onTap: () {
-                //           Navigator.push(
-                //               context,
-                //               PageTransition(
-                //                   type: PageTransitionType.fade,
-                //                   child: GridCocktails()));
-                //         },
-                //         child: Text(
-                //           "View All",
-                //           style:
-                //               TextStyle(fontSize: 15, color: Colors.redAccent),
-                //         ),
-                //       ),
-                //     ]),
-              ), //Popular Cocktails
+//Popular Cocktails
               FutureBuilder(
-                  future: getCocktails("martini"),
+                  future: getCocktails("margarita"),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.done) {
                       return Column(
@@ -177,68 +150,71 @@ class _UserHomepageState extends State<UserHomepage>
                       );
                     }
                   }),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Colorful Cocktails",
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ]),
-              ), //Popular Cocktails
-              // FutureBuilder(
-              //     future: getCocktails("margarita"),
-              //     builder: (context, snapshot) {
-              //       return Container(
-              //         height: 250,
-              //         child: ListView.separated(
-              //           padding: EdgeInsets.all(14),
-              //           scrollDirection: Axis.horizontal,
-              //           itemCount: cocktails.length,
-              //           separatorBuilder: (context, _) => SizedBox(
-              //             width: 12,
-              //           ),
-              //           //itemBuilder: (context, index) => buildCard(),
-              //           itemBuilder: (context, index) => buildCard(index),
-              //         ),
-              //       );
-              //     }),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "BlahBlah Cocktails",
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ]),
-              ), //Popular Cocktails
-              // FutureBuilder(
-              //     future: getCocktails("margarita"),
-              //     builder: (context, snapshot) {
-              //       return Container(
-              //         height: 250,
-              //         child: ListView.separated(
-              //           padding: EdgeInsets.all(14),
-              //           scrollDirection: Axis.horizontal,
-              //           itemCount: cocktails.length,
-              //           separatorBuilder: (context, _) => SizedBox(
-              //             width: 12,
-              //           ),
-              //           //itemBuilder: (context, index) => buildCard(),
-              //           itemBuilder: (context, index) => buildCard(index),
-              //         ),
-              //       );
-              //     }),
+              SizedBox(
+                height: 10,
+              ),
+              FutureBuilder(
+                  future: getCocktails("martini"),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      return Column(
+                        children: [
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 10.0),
+                            child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "New Cocktails",
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          PageTransition(
+                                              type: PageTransitionType.fade,
+                                              child: GridCocktails(
+                                                  cocktail_list: cocktails)));
+                                    },
+                                    child: Text(
+                                      "View All",
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          color: Colors.redAccent),
+                                    ),
+                                  ),
+                                ]),
+                          ),
+                          Container(
+                            height: 400,
+                            child: GridView.builder(
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 2),
+                              padding: EdgeInsets.all(14),
+                              scrollDirection: Axis.horizontal,
+                              itemCount: cocktails.length,
+                              //itemBuilder: (context, index) => buildCard(),
+                              itemBuilder: (context, index) => Padding(
+                                padding: const EdgeInsets.all(5.0),
+                                child: buildCard(index),
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    } else {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                  }),
             ],
           ),
         ),
@@ -274,49 +250,49 @@ class _UserHomepageState extends State<UserHomepage>
                 ),
               ),
             ), //Pic
-            // Row(
-            //   //crossAxisAlignment: CrossAxisAlignment.stretch,
-            //   mainAxisAlignment: MainAxisAlignment.center,
+            // FittedBox(
+            //   fit: BoxFit.fitWidth,
+            //   child: Row(
+            //     //crossAxisAlignment: CrossAxisAlignment.stretch,
+            //     mainAxisAlignment: MainAxisAlignment.center,
             //
-            //   children: [
-            //     //Icon(Icons.local_drink),
-            //     Container(
-            //       child: Image.asset('lib/icons/bottle.png'),
-            //     ),
-            //     Text(
-            //       "Tequila",
-            //       style: TextStyle(color: Colors.white, fontSize: 14),
-            //     ),
-            //     SizedBox(
-            //       width: 15,
-            //     ),
+            //     children: [
+            //       //Icon(Icons.local_drink),
+            //       Container(
+            //         child: Image.asset('assets/icons/bottle.png'),
+            //       ),
+            //       Text(
+            //         "Tequila",
+            //         style: TextStyle(color: Colors.redAccent, fontSize: 14),
+            //       ),
             //
-            //     Icon(Icons.fastfood),
-            //     Text(
-            //       "Flavor",
-            //       style: TextStyle(color: Colors.white, fontSize: 14),
-            //     ),
-            //     SizedBox(
-            //       width: 15,
-            //     ),
-            //     Icon(Icons.fastfood),
+            //       Icon(Icons.fastfood),
+            //       Text(
+            //         "Flavor",
+            //         style: TextStyle(color: Colors.red, fontSize: 14),
+            //       ),
+            //       SizedBox(
+            //         width: 15,
+            //       ),
             //
-            //     Text(
-            //       "Weak",
-            //       style: TextStyle(color: Colors.white, fontSize: 14),
-            //     ),
-            //     // SizedBox(
-            //     //   width: 15,
-            //     // ),
-            //     // Icon(Icons.list_alt_rounded),
-            //     // Text(
-            //     //   "2 Ingredients",
-            //     //   style: TextStyle(color: Colors.white, fontSize: 14),
-            //     // ),
-            //   ],
+            //       Container(
+            //         child: Image.asset('assets/icons/flex.png'),
+            //       ),
+            //       Text(
+            //         "Weak",
+            //         style: TextStyle(color: Colors.red, fontSize: 14),
+            //       ),
+            //       SizedBox(
+            //         width: 15,
+            //       ),
+            //     ],
+            //   ),
             // ), //Icons
             Text(
               cocktails[index].strDrink,
+              overflow: TextOverflow.fade,
+              maxLines: 1,
+              softWrap: false,
               style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
