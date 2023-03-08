@@ -24,9 +24,14 @@ class CocktailCardPage extends StatelessWidget {
       body: ListView(
         scrollDirection: Axis.vertical,
         children: [
+          const SizedBox(
+            height: 10,
+          ),
           Image.network(
             cocktail.strDrinkThumb,
-            fit: BoxFit.cover,
+            height: 400,
+            width: 400,
+            //fit: BoxFit.fitHeight,
           ),
           const SizedBox(
             height: 10,
@@ -73,7 +78,7 @@ class CocktailCardPage extends StatelessWidget {
               const Text(
                 "Recipe Instructions",
                 style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
+                textAlign: TextAlign.left,
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 15.0),
@@ -93,7 +98,7 @@ class CocktailCardPage extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const LikeButton(
+              LikeButton(
                 likeCount: 1,
               ),
               const SizedBox(

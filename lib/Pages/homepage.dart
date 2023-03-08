@@ -29,7 +29,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
   static const List<Widget> _widgetOptions = <Widget>[
     UserHomepage(),
-    UserRecommendPage(),
+    FinderPage(),
     FavoritesPage(),
     SettingsPage(),
   ];
@@ -38,14 +38,14 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        elevation: 10,
-        backgroundColor: Colors.grey.shade900,
-        title: const Text(
-          'Drinkly: We can remove this bar if not needed',
-          style: TextStyle(fontSize: 14),
-        ),
-      ),
+      // appBar: AppBar(
+      //   elevation: 10,
+      //   backgroundColor: Colors.grey.shade900,
+      //   title: const Text(
+      //     'Drinkly',
+      //     style: TextStyle(fontSize: 14),
+      //   ),
+      // ),
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
@@ -67,7 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 _selectedIndex = index;
               });
             },
-            tabs: const [
+            tabs: [
               GButton(
                 icon: Icons.home,
                 text: "Home",

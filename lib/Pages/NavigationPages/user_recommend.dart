@@ -1,25 +1,51 @@
+import 'package:drinkly_cocktails/Pages/FinderPages/FinderFirstTab.dart';
+import 'package:drinkly_cocktails/Pages/FinderPages/FinderSecondTab.dart';
 import 'package:flutter/material.dart';
 
-class UserRecommendPage extends StatefulWidget {
-  const UserRecommendPage({Key? key}) : super(key: key);
+class FinderPage extends StatelessWidget {
+  const FinderPage({Key? key}) : super(key: key);
 
-  @override
-  State<UserRecommendPage> createState() => _UserRecommendPageState();
-}
-
-class _UserRecommendPageState extends State<UserRecommendPage> {
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-          child: Text(
-        "User Recommend Page",
-        style: TextStyle(
-          color: Colors.black,
-          fontWeight: FontWeight.bold,
-          fontSize: 25,
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text("Finder"),
+          backgroundColor: Colors.grey.shade900,
         ),
-      )),
+        body: Column(
+          children: [
+            TabBar(
+                labelColor: Colors.black87,
+                indicatorColor: Colors.deepPurpleAccent,
+                tabs: [
+                  Tab(
+                    text: "Recommendations",
+                    icon: Image.asset(
+                      'assets/icons/recommend.png',
+                      scale: 4,
+                      color: Colors.deepPurple,
+                    ),
+                    // Image.asset('lib/icons/bottle.png')
+                  ),
+                  Tab(
+                    text: "Search",
+                    icon: Icon(
+                      Icons.search,
+                      color: Colors.deepPurple,
+                    ),
+                  ),
+                ]),
+            Expanded(
+              child: TabBarView(children: [
+                FinderFirstTab(),
+                FinderSecondTab(),
+              ]),
+            )
+          ],
+        ),
+      ),
     );
   }
 }
