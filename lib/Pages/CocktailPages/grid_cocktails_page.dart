@@ -30,6 +30,7 @@ class _GridCocktailsState extends State<GridCocktails> {
         body: SingleChildScrollView(
           child: Column(
             children: [
+              Text("Viewing ${widget.cocktail_list.length} Results:"),
               GridView.builder(
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2),
@@ -45,6 +46,7 @@ class _GridCocktailsState extends State<GridCocktails> {
                   child: buildCard(index),
                 ),
               ),
+              Text("Total Results: ${widget.cocktail_list.length}"),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
                 child: Text(
@@ -66,7 +68,7 @@ class _GridCocktailsState extends State<GridCocktails> {
                 child: Material(
                   child: Ink.image(
                     image:
-                        NetworkImage(widget.cocktail_list[index].strDrinkThumb),
+                        NetworkImage(widget.cocktail_list[index].strImageURL),
                     fit: BoxFit.cover,
                     child: InkWell(
                       onTap: () {
@@ -85,7 +87,7 @@ class _GridCocktailsState extends State<GridCocktails> {
 
             FittedBox(
               child: Text(
-                widget.cocktail_list[index].strDrink,
+                widget.cocktail_list[index].strCocktailName,
                 style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,

@@ -14,7 +14,7 @@ class CocktailCardPage extends StatelessWidget {
         preferredSize: const Size.fromHeight(50),
         child: AppBar(
           title: Text(
-            "${cocktail.strDrink} ${cocktail.idDrink}",
+            "${cocktail.strCocktailName} ${cocktail.cocktailID}",
             style: TextStyle(fontSize: 15, color: Colors.white),
           ),
           backgroundColor: Colors.grey.shade800,
@@ -28,7 +28,7 @@ class CocktailCardPage extends StatelessWidget {
             height: 10,
           ),
           Image.network(
-            cocktail.strDrinkThumb,
+            cocktail.strImageURL,
             height: 400,
             width: 400,
             //fit: BoxFit.fitHeight,
@@ -37,7 +37,7 @@ class CocktailCardPage extends StatelessWidget {
             height: 10,
           ),
           Text(
-            cocktail.strDrink,
+            cocktail.strCocktailName,
             style: const TextStyle(
               fontSize: 30,
               fontWeight: FontWeight.bold,
@@ -50,19 +50,51 @@ class CocktailCardPage extends StatelessWidget {
           Column(
             children: [
               const Text(
+                "Description",
+                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                child: Text(
+                  cocktail.strDescription,
+                  style: const TextStyle(
+                    fontSize: 20,
+                  ),
+                  textAlign: TextAlign.left,
+                ),
+              ),
+              const Text(
                 "Ingredients",
                 style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
               Text(
-                cocktail.strIngredient1,
+                cocktail.strIngredients.split(",").join("\n"),
                 style: const TextStyle(
                   fontSize: 20,
                 ),
                 textAlign: TextAlign.center,
               ),
+              const Text(
+                "Garnish",
+                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
               Text(
-                cocktail.strMeasure1,
+                cocktail.strGarnish,
+                style: const TextStyle(
+                  fontSize: 20,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const Text(
+                "Rim",
+                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+              Text(
+                cocktail.strRim,
                 style: const TextStyle(
                   fontSize: 20,
                 ),
@@ -83,7 +115,7 @@ class CocktailCardPage extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 15.0),
                 child: Text(
-                  cocktail.strInstructions,
+                  cocktail.strPreparation.split(" ,").join("\n"),
                   style: const TextStyle(
                     fontSize: 20,
                   ),

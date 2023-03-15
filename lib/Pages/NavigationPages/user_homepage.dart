@@ -6,7 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:like_button/like_button.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../data_model/getCocktailData.dart';
 import '../CocktailPages/cocktail_card_page.dart';
 import '../CocktailPages/grid_cocktails_page.dart';
 
@@ -19,7 +21,10 @@ class UserHomepage extends StatefulWidget {
 
 class _UserHomepageState extends State<UserHomepage>
     with SingleTickerProviderStateMixin {
+  final db = FirebaseFirestore.instance;
   final user = FirebaseAuth.instance.currentUser;
+  CollectionReference cocktailss =
+      FirebaseFirestore.instance.collection('cocktails');
 
   late AnimationController _controller;
 
@@ -29,21 +34,83 @@ class _UserHomepageState extends State<UserHomepage>
     var response = await http.get(Uri.http(
         "thecocktaildb.com", "/api/json/v1/1/search.php", {"s": searchTerm}));
     var jsonData = jsonDecode(response.body);
+    // cocktails = [];
 
-    cocktails = [];
+    // for (var each_cocktail in jsonData["drinks"]) {
+    //   final cocktail = Cocktail(
+    //     idDrink: each_cocktail["idDrink"],
+    //     strDrink: each_cocktail["strDrink"],
+    //     strInstructions: each_cocktail["strInstructions"],
+    //     strDrinkThumb: each_cocktail["strDrinkThumb"],
+    //     strIngredient1: each_cocktail["strIngredient1"],
+    //     strMeasure1: each_cocktail["strMeasure1"],
+    // //   );
+    //   cocktails.add(cocktail);
+    // }
+    // print(cocktails.length);
+  }
 
-    for (var each_cocktail in jsonData["drinks"]) {
-      final cocktail = Cocktail(
-        idDrink: each_cocktail["idDrink"],
-        strDrink: each_cocktail["strDrink"],
-        strInstructions: each_cocktail["strInstructions"],
-        strDrinkThumb: each_cocktail["strDrinkThumb"],
-        strIngredient1: each_cocktail["strIngredient1"],
-        strMeasure1: each_cocktail["strMeasure1"],
-      );
-      cocktails.add(cocktail);
+  List<Cocktail> listOfCocktails = [];
+
+  Future getCocktailsFirestores() async {
+    var cocktails = await FirebaseFirestore.instance
+        .collection('cocktails')
+        .where("Main_Flavor", isEqualTo: "Fruity")
+        .get();
+
+    cocktailRecords(cocktails);
+  }
+
+  List<Cocktail> listOfCocktailss = [];
+
+  cocktailRecords(QuerySnapshot<Map<String, dynamic>> cocktails) {
+    print(cocktails.docs.length);
+    //print(cocktails.docs.last);
+    //print(cocktails.docs[1].data());
+
+    for (var i = 0; i < cocktails.docs.length; i++) {
+      print(cocktails.docs[i].data());
+      var data = cocktails.docs[i].data();
+      listOfCocktailss.add(Cocktail(
+        cocktailID: data["Cocktail_ID"].toString(),
+        strCocktailName: data["Cocktail_Name"],
+        strDescription: data["Description"],
+        strIngredients: data["Ingredients"],
+        strPreparation: data["Preparation"],
+        strGarnish: data["Garnish"] ?? "None",
+        strImageURL: data["Image_url"],
+        strCategory: data["Category"],
+        strCategories: data['Categories'],
+        strDetailedFlavors: data["DetailedFlavors"] ?? "None",
+        strRim: data["Rim"] ?? "None",
+        strStrength: data["Strength"],
+        strMixers: data["Mixers"] ?? "None",
+        strMainFlavor: data["Main_Flavor"],
+      ));
     }
-    print(cocktails.length);
+
+    // var _list = cocktails.docs
+    //     .map((data) => Cocktail(
+    //           cocktailID: data.id.toString(),
+    //           strCocktailName: data["Cocktail_Name"],
+    //           strDescription: data["Description"],
+    //           strIngredients: data["Ingredients"],
+    //           strPreparation: data["Preparation"],
+    //           strGarnish: data["Garnish"] ?? "None",
+    //           strImageURL: data["Image_url"],
+    //           strCategory: data["Category"],
+    //           strCategories: data['Categories'],
+    //           strDetailedFlavors: data["DetailedFlavors"] ?? "None",
+    //           strRim: data["Rim"] ?? "None",
+    //           strStrength: data["Strength"],
+    //           strMixers: data["Mixers"] ?? "None",
+    //           strMainFlavor: data["Main_Flavor"],
+    //         ))
+    //     .toList();
+
+    // setState(() {
+    //   listOfCocktails = _list;
+    // });
   }
 
   void navigateCardPage(int index) {
@@ -57,6 +124,7 @@ class _UserHomepageState extends State<UserHomepage>
 
   @override
   void initState() {
+    getCocktailsFirestores();
     super.initState();
     _controller = AnimationController(vsync: this);
   }
@@ -89,9 +157,10 @@ class _UserHomepageState extends State<UserHomepage>
               ),
 //Popular Cocktails
               FutureBuilder(
-                  future: getCocktails("margarita"),
+                  future: getCocktailsFirestores(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.done) {
+                      print(listOfCocktails);
                       return Column(
                         children: [
                           Padding(
@@ -115,7 +184,8 @@ class _UserHomepageState extends State<UserHomepage>
                                           PageTransition(
                                               type: PageTransitionType.fade,
                                               child: GridCocktails(
-                                                  cocktail_list: cocktails)));
+                                                  cocktail_list:
+                                                      listOfCocktailss)));
                                     },
                                     child: Text(
                                       "View All",
@@ -134,11 +204,11 @@ class _UserHomepageState extends State<UserHomepage>
                                       crossAxisCount: 2),
                               padding: EdgeInsets.all(14),
                               scrollDirection: Axis.horizontal,
-                              itemCount: cocktails.length,
+                              itemCount: 12, //change to cocktails.length
                               //itemBuilder: (context, index) => buildCard(),
                               itemBuilder: (context, index) => Padding(
                                 padding: const EdgeInsets.all(5.0),
-                                child: buildCard(index),
+                                child: buildCard(listOfCocktailss[index]),
                               ),
                             ),
                           ),
@@ -153,74 +223,12 @@ class _UserHomepageState extends State<UserHomepage>
               SizedBox(
                 height: 10,
               ),
-              FutureBuilder(
-                  future: getCocktails("martini"),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      return Column(
-                        children: [
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 10.0),
-                            child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "New Cocktails",
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(
-                                          context,
-                                          PageTransition(
-                                              type: PageTransitionType.fade,
-                                              child: GridCocktails(
-                                                  cocktail_list: cocktails)));
-                                    },
-                                    child: Text(
-                                      "View All",
-                                      style: TextStyle(
-                                          fontSize: 15,
-                                          color: Colors.redAccent),
-                                    ),
-                                  ),
-                                ]),
-                          ),
-                          Container(
-                            height: 400,
-                            child: GridView.builder(
-                              gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 2),
-                              padding: EdgeInsets.all(14),
-                              scrollDirection: Axis.horizontal,
-                              itemCount: cocktails.length,
-                              //itemBuilder: (context, index) => buildCard(),
-                              itemBuilder: (context, index) => Padding(
-                                padding: const EdgeInsets.all(5.0),
-                                child: buildCard(index),
-                              ),
-                            ),
-                          ),
-                        ],
-                      );
-                    } else {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-                  }),
             ],
           ),
         ),
       );
 
-  Widget buildCard(int index) => Container(
+  Widget buildCard(Cocktail cocktailId) => Container(
         decoration: BoxDecoration(
             //border: Border.all(color: Colors.blue),
             //color: Colors.blue,
@@ -234,7 +242,7 @@ class _UserHomepageState extends State<UserHomepage>
                 aspectRatio: 4 / 3,
                 child: Material(
                   child: Ink.image(
-                    image: NetworkImage(cocktails[index].strDrinkThumb),
+                    image: NetworkImage(cocktailId.strImageURL),
                     fit: BoxFit.cover,
                     child: InkWell(
                       onTap: () {
@@ -242,8 +250,7 @@ class _UserHomepageState extends State<UserHomepage>
                             context,
                             PageTransition(
                                 type: PageTransitionType.fade,
-                                child: CocktailCardPage(
-                                    cocktail: cocktails[index])));
+                                child: CocktailCardPage(cocktail: cocktailId)));
                       },
                     ),
                   ),
@@ -289,7 +296,7 @@ class _UserHomepageState extends State<UserHomepage>
             //   ),
             // ), //Icons
             Text(
-              cocktails[index].strDrink,
+              cocktailId.strCocktailName,
               overflow: TextOverflow.fade,
               maxLines: 1,
               softWrap: false,
