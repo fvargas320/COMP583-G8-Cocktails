@@ -30,46 +30,48 @@ class _UserHomepageState extends State<UserHomepage>
 
   List<Cocktail> cocktails = [];
 
-  Future getCocktails(String searchTerm) async {
-    var response = await http.get(Uri.http(
-        "thecocktaildb.com", "/api/json/v1/1/search.php", {"s": searchTerm}));
-    var jsonData = jsonDecode(response.body);
-    // cocktails = [];
+  List<Cocktail> listOfPartyCocktails = [];
+  List<Cocktail> listOfFruityCocktails = [];
+  List<Cocktail> listOfQuickEasyCocktails = [];
 
-    // for (var each_cocktail in jsonData["drinks"]) {
-    //   final cocktail = Cocktail(
-    //     idDrink: each_cocktail["idDrink"],
-    //     strDrink: each_cocktail["strDrink"],
-    //     strInstructions: each_cocktail["strInstructions"],
-    //     strDrinkThumb: each_cocktail["strDrinkThumb"],
-    //     strIngredient1: each_cocktail["strIngredient1"],
-    //     strMeasure1: each_cocktail["strMeasure1"],
-    // //   );
-    //   cocktails.add(cocktail);
-    // }
-    // print(cocktails.length);
-  }
-
-  List<Cocktail> listOfCocktails = [];
+  //List<Cocktail> listOfCocktailss = [];
 
   Future getCocktailsFirestores() async {
-    var cocktails = await FirebaseFirestore.instance
+    var fruitCocktails = await FirebaseFirestore.instance
         .collection('cocktails')
         .where("Main_Flavor", isEqualTo: "Fruity")
         .get();
 
-    cocktailRecords(cocktails);
+    cocktailRecords(fruitCocktails, listOfFruityCocktails);
   }
 
-  List<Cocktail> listOfCocktailss = [];
+  Future getPartyFavoriteCocktails() async {
+    var cocktails = await FirebaseFirestore.instance
+        .collection('cocktails')
+        .where("Categories", isEqualTo: "Party Favorites & Crowd Pleasers")
+        .get();
+    cocktailRecords(cocktails, listOfPartyCocktails);
+  }
 
-  cocktailRecords(QuerySnapshot<Map<String, dynamic>> cocktails) {
+  Future getQuickAndEasyCocktails() async {
+    var cocktails = await FirebaseFirestore.instance
+        .collection('cocktails')
+        .where("Categories", isEqualTo: "Quick & Easy Cocktails")
+        .get();
+    cocktailRecords(cocktails, listOfQuickEasyCocktails);
+  }
+
+  cocktailRecords(QuerySnapshot<Map<String, dynamic>> cocktails,
+      List<Cocktail> listOfCocktailss) {
+    //listOfCocktailss = [];
+    //listOfCocktailss = [];
+
     print(cocktails.docs.length);
     //print(cocktails.docs.last);
     //print(cocktails.docs[1].data());
 
     for (var i = 0; i < cocktails.docs.length; i++) {
-      print(cocktails.docs[i].data());
+      //print(cocktails.docs[i].data());
       var data = cocktails.docs[i].data();
       listOfCocktailss.add(Cocktail(
         cocktailID: data["Cocktail_ID"].toString(),
@@ -79,14 +81,16 @@ class _UserHomepageState extends State<UserHomepage>
         strPreparation: data["Preparation"],
         strGarnish: data["Garnish"] ?? "None",
         strImageURL: data["Image_url"],
-        strCategory: data["Category"],
-        strCategories: data['Categories'],
+        strCategory: data["Category"] ?? "None",
+        strCategories: data['Categories'] ?? "None",
         strDetailedFlavors: data["DetailedFlavors"] ?? "None",
         strRim: data["Rim"] ?? "None",
         strStrength: data["Strength"],
         strMixers: data["Mixers"] ?? "None",
-        strMainFlavor: data["Main_Flavor"],
+        strMainFlavor: data["Main_Flavor"] ?? "None",
       ));
+
+      print(listOfCocktailss.length);
     }
 
     // var _list = cocktails.docs
@@ -109,7 +113,7 @@ class _UserHomepageState extends State<UserHomepage>
     //     .toList();
 
     // setState(() {
-    //   listOfCocktails = _list;
+    //   listOfCocktails;
     // });
   }
 
@@ -155,12 +159,10 @@ class _UserHomepageState extends State<UserHomepage>
               SizedBox(
                 height: 10,
               ),
-//Popular Cocktails
               FutureBuilder(
-                  future: getCocktailsFirestores(),
+                  future: getQuickAndEasyCocktails(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.done) {
-                      print(listOfCocktails);
                       return Column(
                         children: [
                           Padding(
@@ -171,7 +173,7 @@ class _UserHomepageState extends State<UserHomepage>
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    "Popular Cocktails",
+                                    "Quick & Easy Cocktails",
                                     style: TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold,
@@ -185,7 +187,74 @@ class _UserHomepageState extends State<UserHomepage>
                                               type: PageTransitionType.fade,
                                               child: GridCocktails(
                                                   cocktail_list:
-                                                      listOfCocktailss)));
+                                                      listOfQuickEasyCocktails)));
+                                    },
+                                    child: Text(
+                                      "View All",
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          color: Colors.redAccent),
+                                    ),
+                                  ),
+                                ]),
+                          ),
+                          Container(
+                            height: 400,
+                            child: GridView.builder(
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 1),
+                              padding: EdgeInsets.all(14),
+                              scrollDirection: Axis.horizontal,
+                              itemCount: 12, //change to cocktails.length
+                              //itemBuilder: (context, index) => buildCard(),
+                              itemBuilder: (context, index) => Padding(
+                                padding: const EdgeInsets.all(5.0),
+                                child:
+                                    buildCard(listOfQuickEasyCocktails[index]),
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    } else {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                  }),
+              SizedBox(
+                height: 10,
+              ),
+              FutureBuilder(
+                  future: getPartyFavoriteCocktails(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      return Column(
+                        children: [
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 10.0),
+                            child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Party Favorites & Crowd Pleasers",
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          PageTransition(
+                                              type: PageTransitionType.fade,
+                                              child: GridCocktails(
+                                                  cocktail_list:
+                                                      listOfPartyCocktails)));
                                     },
                                     child: Text(
                                       "View All",
@@ -208,7 +277,74 @@ class _UserHomepageState extends State<UserHomepage>
                               //itemBuilder: (context, index) => buildCard(),
                               itemBuilder: (context, index) => Padding(
                                 padding: const EdgeInsets.all(5.0),
-                                child: buildCard(listOfCocktailss[index]),
+                                child: buildCard(listOfPartyCocktails[index]),
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    } else {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                  }),
+              SizedBox(
+                height: 10,
+              ),
+//Popular Cocktails
+              FutureBuilder(
+                  future: getCocktailsFirestores(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      return Column(
+                        children: [
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 10.0),
+                            child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Fruity Cocktails",
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          PageTransition(
+                                              type: PageTransitionType.fade,
+                                              child: GridCocktails(
+                                                  cocktail_list:
+                                                      listOfFruityCocktails)));
+                                    },
+                                    child: Text(
+                                      "View All",
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          color: Colors.redAccent),
+                                    ),
+                                  ),
+                                ]),
+                          ),
+                          Container(
+                            height: 400,
+                            child: GridView.builder(
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 2),
+                              padding: EdgeInsets.all(14),
+                              scrollDirection: Axis.horizontal,
+                              itemCount: 12, //change to cocktails.length
+                              //itemBuilder: (context, index) => buildCard(),
+                              itemBuilder: (context, index) => Padding(
+                                padding: const EdgeInsets.all(5.0),
+                                child: buildCard(listOfFruityCocktails[index]),
                               ),
                             ),
                           ),
