@@ -122,14 +122,33 @@ class Cocktail {
       if (strIngredients != null) "Ingredients": strIngredients,
       if (strPreparation != null) "Preparation": strPreparation,
       if (strGarnish != null) "Garnish": strGarnish,
-      if (strImageURL != null) "Image_url": strDescription,
-      if (strCategory != null) "Category": strIngredients,
-      if (strCategories != null) "Categories": strPreparation,
-      if (strDetailedFlavors != null) "DetailedFlavors": strGarnish,
-      if (strRim != null) "Rim": strGarnish,
-      if (strStrength != null) "Strength": strDescription,
-      if (strMixers != null) "Mixers": strIngredients,
-      if (strMainFlavor != null) "Main_Flavor": strPreparation,
+      if (strImageURL != null) "Image_url": strImageURL,
+      if (strCategory != null) "Category": strCategory,
+      if (strCategories != null) "Categories": strCategories,
+      if (strDetailedFlavors != null) "DetailedFlavors": strDetailedFlavors,
+      if (strRim != null) "Rim": strRim,
+      if (strStrength != null) "Strength": strStrength,
+      if (strMixers != null) "Mixers": strMixers,
+      if (strMainFlavor != null) "Main_Flavor": strMainFlavor,
     };
+  }
+
+  factory Cocktail.fromMap(Map<String, dynamic> map) {
+    return Cocktail(
+      cocktailID: map["Cocktail_ID"],
+      strCocktailName: map["Cocktail_Name"],
+      strDescription: map["Description"],
+      strIngredients: map["Ingredients"],
+      strPreparation: map["Preparation"],
+      strGarnish: map["Garnish"] ?? "None",
+      strImageURL: map["Image_url"],
+      strCategory: map["Category"],
+      strCategories: map['Categories'],
+      strDetailedFlavors: map["DetailedFlavors"] ?? "None",
+      strRim: map["Rim"] ?? "None",
+      strStrength: map["Strength"],
+      strMixers: map["Mixers"] ?? "None",
+      strMainFlavor: map["Main_Flavor"],
+    );
   }
 }
