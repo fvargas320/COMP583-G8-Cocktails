@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:drinkly_cocktails/data_model/cocktail.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 import '../CocktailPages/cocktail_card_page.dart';
 
@@ -40,6 +41,29 @@ class _FavoritesPageState extends State<FavoritesPage> {
     });
   }
 
+  bool isLiked = true;
+  void _removeFromFavorites(Cocktail cocktail) async {
+    // Get the current user ID
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+
+    // Remove the cocktail from the user's favorites collection
+    await FirebaseFirestore.instance
+        .collection('Favorite')
+        .doc(userId)
+        .collection('FavoriteCocktails')
+        .doc(cocktail.cocktailID)
+        .delete();
+
+    setState(() {
+      isLiked = false;
+      _fetchFavorites();
+    });
+
+    // Show a message pop-up to indicate that the cocktail has been deleted
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text('$cocktail dismissed')));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,18 +78,38 @@ class _FavoritesPageState extends State<FavoritesPage> {
               itemCount: _favoriteCocktails.length,
               itemBuilder: (BuildContext context, int index) {
                 final cocktail = _favoriteCocktails[index];
-                return ListTile(
-                  leading: Image.network(cocktail.strImageURL),
-                  title: Text(cocktail.strCocktailName ?? ''),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            CocktailCardPage(cocktail: cocktail),
+                return Slidable(
+                  // Specify a key if the Slidable is dismissible.
+                  key: const ValueKey(0),
+
+                  // The end action pane is the one at the right or the bottom side.
+                  endActionPane: ActionPane(
+                    motion: ScrollMotion(),
+                    children: [
+                      SlidableAction(
+                        // An action can be bigger than the others.
+                        flex: 1,
+                        onPressed: (context) => _removeFromFavorites(cocktail),
+                        backgroundColor: Colors.red,
+                        foregroundColor: Colors.white,
+                        icon: Icons.delete,
+                        label: 'Delete',
                       ),
-                    );
-                  },
+                    ],
+                  ),
+                  child: ListTile(
+                    leading: Image.network(cocktail.strImageURL),
+                    title: Text(cocktail.strCocktailName ?? ''),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              CocktailCardPage(cocktail: cocktail),
+                        ),
+                      );
+                    },
+                  ),
                 );
               },
             ),
