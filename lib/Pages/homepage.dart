@@ -74,11 +74,11 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               GButton(
                 icon: Icons.search,
-                text: "Search",
+                text: "Finder",
               ),
               GButton(
                 icon: Icons.list_alt_rounded,
-                text: "Likes",
+                text: "Favorites",
               ),
               GButton(
                 icon: Icons.settings,
