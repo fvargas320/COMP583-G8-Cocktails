@@ -33,8 +33,7 @@ class _UserHomepageState extends State<UserHomepage>
   List<Cocktail> listOfPartyCocktails = [];
   List<Cocktail> listOfFruityCocktails = [];
   List<Cocktail> listOfQuickEasyCocktails = [];
-
-  //List<Cocktail> listOfCocktailss = [];
+  List<Cocktail> listOfAllCocktails = [];
 
   Future getCocktailsFirestores() async {
     var fruitCocktails = await FirebaseFirestore.instance
@@ -61,15 +60,17 @@ class _UserHomepageState extends State<UserHomepage>
     cocktailRecords(cocktails, listOfQuickEasyCocktails);
   }
 
+  Future getAllCocktails() async {
+    var cocktails = await FirebaseFirestore.instance
+        .collection('cocktails')
+        .where("Categories", isEqualTo: "Light & Skinny")
+        .get();
+    cocktailRecords(cocktails, listOfAllCocktails);
+  }
+
   cocktailRecords(QuerySnapshot<Map<String, dynamic>> cocktails,
       List<Cocktail> listOfCocktailss) {
-    //listOfCocktailss = [];
-    //listOfCocktailss = [];
-
     print(cocktails.docs.length);
-    //print(cocktails.docs.last);
-    //print(cocktails.docs[1].data());
-
     for (var i = 0; i < cocktails.docs.length; i++) {
       //print(cocktails.docs[i].data());
       var data = cocktails.docs[i].data();
@@ -88,6 +89,7 @@ class _UserHomepageState extends State<UserHomepage>
         strStrength: data["Strength"],
         strMixers: data["Mixers"] ?? "None",
         strMainFlavor: data["Main_Flavor"] ?? "None",
+        strAlcohols: data["Alcohols"] ?? "NONE",
       ));
 
       print(listOfCocktailss.length);
@@ -150,12 +152,13 @@ class _UserHomepageState extends State<UserHomepage>
           child: Column(
             children: [
               Text(
-                'Welcome,  ${user?.email}',
+                'Hi,  ${user?.email}',
                 style: const TextStyle(
                     fontSize: 20,
                     color: Colors.black,
                     fontWeight: FontWeight.bold),
               ),
+
               SizedBox(
                 height: 10,
               ),
@@ -440,7 +443,17 @@ class _UserHomepageState extends State<UserHomepage>
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
                   color: Colors.black87),
-            ), //Cocktail Name
+            ),
+            Text(
+              "${cocktailId.strMainFlavor} Flavor ",
+              overflow: TextOverflow.fade,
+              maxLines: 1,
+              //softWrap: false,
+              style: const TextStyle(
+                  fontWeight: FontWeight.normal,
+                  fontSize: 14,
+                  color: Colors.black87),
+            ),
           ],
         ),
       );

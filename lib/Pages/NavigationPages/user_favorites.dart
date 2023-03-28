@@ -98,8 +98,14 @@ class _FavoritesPageState extends State<FavoritesPage> {
                     ],
                   ),
                   child: ListTile(
-                    leading: Image.network(cocktail.strImageURL),
+                    leading: Image.network(
+                      cocktail.strImageURL,
+                    ),
                     title: Text(cocktail.strCocktailName ?? ''),
+                    subtitle: Text(
+                      "${cocktail.strMainFlavor} Flavor, ${cocktail.strCategories}",
+                      overflow: TextOverflow.fade,
+                    ),
                     onTap: () {
                       Navigator.push(
                         context,

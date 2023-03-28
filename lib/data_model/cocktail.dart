@@ -21,6 +21,7 @@ class Cocktail {
   final String strStrength;
   final String strMixers;
   final String strMainFlavor;
+  final String strAlcohols;
 
   Cocktail({
     required this.cocktailID,
@@ -37,6 +38,7 @@ class Cocktail {
     required this.strStrength,
     required this.strMixers,
     required this.strMainFlavor,
+    required this.strAlcohols,
   });
 
   factory Cocktail.fromJson(Map<String, dynamic> json) => Cocktail(
@@ -54,6 +56,7 @@ class Cocktail {
         strStrength: json["Strength"],
         strMixers: json["Mixers"] ?? "None",
         strMainFlavor: json["Main_Flavor"],
+        strAlcohols: json["Alcohols"] ?? "None",
       );
 
   Map<String, dynamic> toJson() => {
@@ -71,6 +74,7 @@ class Cocktail {
         "Strength": strStrength,
         "Mixers": strMixers,
         "Main_Flavor": strMainFlavor,
+        "Alcohols": strAlcohols,
       };
 
   factory Cocktail.fromFirestore(Map<String, dynamic> snapshot) {
@@ -90,6 +94,7 @@ class Cocktail {
       strStrength: data["Strength"],
       strMixers: data["Mixers"] ?? "None",
       strMainFlavor: data["Main_Flavor"],
+      strAlcohols: data["Alcohols"] ?? "None",
     );
   }
 
@@ -111,6 +116,7 @@ class Cocktail {
       strStrength: data?["Strength"],
       strMixers: data?["Mixers"] ?? "None",
       strMainFlavor: data?["Main_Flavor"],
+      strAlcohols: data?["Alcohols"] ?? "None",
     );
   }
 
@@ -130,6 +136,7 @@ class Cocktail {
       if (strStrength != null) "Strength": strStrength,
       if (strMixers != null) "Mixers": strMixers,
       if (strMainFlavor != null) "Main_Flavor": strMainFlavor,
+      if (strAlcohols != null) "Alcohols": strAlcohols,
     };
   }
 
@@ -149,6 +156,7 @@ class Cocktail {
       strStrength: map["Strength"],
       strMixers: map["Mixers"] ?? "None",
       strMainFlavor: map["Main_Flavor"],
+      strAlcohols: map["Alcohols"] ?? "Unknown",
     );
   }
 }

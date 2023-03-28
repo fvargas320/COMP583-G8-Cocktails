@@ -230,9 +230,10 @@ class _CocktailCardPageState extends State<CocktailCardPage> {
                 isLiked: isLiked,
                 onTap: addToFavoritesCallback,
               ),
-              const SizedBox(
-                width: 30,
-              ),
+              Text("Add to Favorites"),
+              // const SizedBox(
+              //   width: 30,
+              // ),
               // LikeButton(
               //   onTap: addToFavoritesCallback,
               //   likeBuilder: (isLiked) {
