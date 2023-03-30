@@ -1,10 +1,12 @@
 import 'package:algolia_helper_flutter/algolia_helper_flutter.dart';
+import 'package:drinkly_cocktails/data_model/cocktail.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 import '../../data_model/HitsPage.dart';
-import '../../data_model/Product.dart';
 import '../../data_model/SearchMetadata.dart';
+import '../CocktailPages/cocktail_card_page.dart';
 
 class SearchBarTab extends StatefulWidget {
   const SearchBarTab({Key? key}) : super(key: key);
@@ -15,12 +17,12 @@ class SearchBarTab extends StatefulWidget {
 
 class _SearchBarTabState extends State<SearchBarTab> {
   final _productsSearcher = HitsSearcher(
-      applicationID: 'latency',
-      apiKey: '927c3fe76d4b52c5a2912973f35a3077',
-      indexName: 'STAGING_native_ecom_demo_products');
+      applicationID: 'HNELVCXNJF',
+      apiKey: '8e08827d067077ab2ce141b74e215b58',
+      indexName: 'Cocktails');
 
   final _searchTextController = TextEditingController();
-  final PagingController<int, Product> _pagingController =
+  final PagingController<int, Cocktail> _pagingController =
       PagingController(firstPageKey: 0);
 
   Stream<SearchMetadata> get _searchMetadata =>
@@ -45,7 +47,12 @@ class _SearchBarTabState extends State<SearchBarTab> {
         _pagingController.refresh();
       }
       _pagingController.appendPage(page.items, page.nextPageKey);
-    }).onError((error) => _pagingController.error = error);
+      print(page.items.length);
+    }).onError((error) {
+      print('Error in _searchPage stream: $error');
+      _pagingController.error = error;
+    });
+
     _pagingController.addPageRequestListener((pageKey) =>
         _productsSearcher.applyState((state) => state.copyWith(page: pageKey)));
   }
@@ -58,22 +65,62 @@ class _SearchBarTabState extends State<SearchBarTab> {
     super.dispose();
   }
 
-  Widget _hits(BuildContext context) => PagedListView<int, Product>(
+  Widget _hits(BuildContext context) => PagedListView<int, Cocktail>(
       pagingController: _pagingController,
-      builderDelegate: PagedChildBuilderDelegate<Product>(
+      builderDelegate: PagedChildBuilderDelegate<Cocktail>(
           noItemsFoundIndicatorBuilder: (_) => const Center(
-                child: Text('No results found'),
+                child: Text('No cocktails found'),
               ),
           itemBuilder: (_, item, __) => Container(
                 color: Colors.white,
-                height: 80,
+                height: 100,
                 padding: const EdgeInsets.all(8),
-                child: Row(
-                  children: [
-                    SizedBox(width: 50, child: Image.network(item.image)),
-                    const SizedBox(width: 20),
-                    Expanded(child: Text(item.name))
-                  ],
+                child: Slidable(
+                  key: const ValueKey(0),
+
+                  // The end action pane is the one at the right or the bottom side.
+                  endActionPane: ActionPane(
+                    motion: ScrollMotion(),
+                    children: [
+                      SlidableAction(
+                        // An action can be bigger than the others.
+                        flex: 1,
+                        onPressed: (context) => print("HI"),
+                        backgroundColor: Colors.blueAccent,
+                        foregroundColor: Colors.white,
+                        icon: Icons.favorite,
+                        label: 'Favorite',
+                      ),
+                      SlidableAction(
+                        // An action can be bigger than the others.
+                        flex: 1,
+                        onPressed: (context) => print("HI"),
+                        backgroundColor: Colors.green,
+                        foregroundColor: Colors.white,
+                        icon: Icons.add_circle,
+                        label: 'Lists',
+                      ),
+                    ],
+                  ),
+                  child: ListTile(
+                    leading: Image.network(
+                      item.strImageURL,
+                    ),
+                    title: Text(item.strCocktailName ?? ''),
+                    subtitle: Text(
+                      "${item.strMainFlavor} Flavor, ${item.strCategories}",
+                      overflow: TextOverflow.fade,
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              CocktailCardPage(cocktail: item),
+                        ),
+                      );
+                    },
+                  ),
                 ),
               )));
 

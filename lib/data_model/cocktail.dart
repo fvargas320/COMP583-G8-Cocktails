@@ -41,22 +41,22 @@ class Cocktail {
     required this.strAlcohols,
   });
 
-  factory Cocktail.fromJson(Map<String, dynamic> json) => Cocktail(
-        cocktailID: json["Cocktail_ID"],
-        strCocktailName: json["Cocktail_Name"],
-        strDescription: json["Description"],
-        strIngredients: json["Ingredients"],
-        strPreparation: json["Preparation"],
-        strGarnish: json["Garnish"] ?? "None",
-        strImageURL: json["Image_url"],
-        strCategory: json["Category"],
-        strCategories: json['Categories'],
-        strDetailedFlavors: json["DetailedFlavors"] ?? "None",
-        strRim: json["Rim"] ?? "None",
-        strStrength: json["Strength"],
-        strMixers: json["Mixers"] ?? "None",
-        strMainFlavor: json["Main_Flavor"],
-        strAlcohols: json["Alcohols"] ?? "None",
+  factory Cocktail.fromJson(Map<String, dynamic> data) => Cocktail(
+        cocktailID: data?["Cocktail_ID"],
+        strCocktailName: data?["Cocktail_Name"],
+        strDescription: data?["Description"],
+        strIngredients: data?["Ingredients"],
+        strPreparation: data?["Preparation"],
+        strGarnish: data?["Garnish"] ?? "None",
+        strImageURL: data?["Image_url"],
+        strCategory: data?["Category"],
+        strCategories: data?['Categories'],
+        strDetailedFlavors: data?["DetailedFlavors"] ?? "None",
+        strRim: data?["Rim"] ?? "None",
+        strStrength: data?["Strength"],
+        strMixers: data?["Mixers"] ?? "None",
+        strMainFlavor: data?["Main_Flavor"],
+        strAlcohols: data?["Alcohols"] ?? "None",
       );
 
   Map<String, dynamic> toJson() => {
@@ -142,20 +142,20 @@ class Cocktail {
 
   factory Cocktail.fromMap(Map<String, dynamic> map) {
     return Cocktail(
-      cocktailID: map["Cocktail_ID"],
-      strCocktailName: map["Cocktail_Name"],
-      strDescription: map["Description"],
-      strIngredients: map["Ingredients"],
-      strPreparation: map["Preparation"],
+      cocktailID: map["Cocktail_ID"].toString(),
+      strCocktailName: map["Cocktail_Name"] ?? "None",
+      strDescription: map["Description"] ?? "None",
+      strIngredients: map["Ingredients"] ?? "None",
+      strPreparation: map["Preparation"] ?? "None",
       strGarnish: map["Garnish"] ?? "None",
-      strImageURL: map["Image_url"],
-      strCategory: map["Category"],
-      strCategories: map['Categories'],
+      strImageURL: map["Image_url"] ?? "None",
+      strCategory: map["Category"] ?? "None",
+      strCategories: map['Categories'] ?? "None",
       strDetailedFlavors: map["DetailedFlavors"] ?? "None",
       strRim: map["Rim"] ?? "None",
-      strStrength: map["Strength"],
+      strStrength: map["Strength"] ?? "None",
       strMixers: map["Mixers"] ?? "None",
-      strMainFlavor: map["Main_Flavor"],
+      strMainFlavor: map["Main_Flavor"] ?? "None",
       strAlcohols: map["Alcohols"] ?? "Unknown",
     );
   }
