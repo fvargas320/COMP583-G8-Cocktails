@@ -70,9 +70,7 @@ class _UserHomepageState extends State<UserHomepage>
 
   cocktailRecords(QuerySnapshot<Map<String, dynamic>> cocktails,
       List<Cocktail> listOfCocktailss) {
-    print(cocktails.docs.length);
     for (var i = 0; i < cocktails.docs.length; i++) {
-      //print(cocktails.docs[i].data());
       var data = cocktails.docs[i].data();
       listOfCocktailss.add(Cocktail(
         cocktailID: data["Cocktail_ID"].toString(),

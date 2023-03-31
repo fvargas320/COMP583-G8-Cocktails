@@ -1,8 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:drinkly_cocktails/data_model/cocktail.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:like_button/like_button.dart';
+import '../../Services/favorites_service.dart';
 
 class CocktailCardPage extends StatefulWidget {
   final Cocktail cocktail;
@@ -14,69 +13,7 @@ class CocktailCardPage extends StatefulWidget {
 }
 
 class _CocktailCardPageState extends State<CocktailCardPage> {
-  final db = FirebaseFirestore.instance;
-  final user = FirebaseAuth.instance.currentUser;
-
   bool isLiked = false;
-
-  void _addToFavorites(Cocktail cocktail) async {
-    // Get the current user ID
-    final userId = FirebaseAuth.instance.currentUser?.uid;
-
-    // Add the cocktail to the user's favorites collection
-    await FirebaseFirestore.instance
-        .collection('Favorite')
-        .doc(userId)
-        .collection('FavoriteCocktails')
-        .doc(cocktail.cocktailID)
-        .set({
-      "Cocktail_ID": cocktail.cocktailID,
-      "Cocktail_Name": cocktail.strCocktailName,
-      "Description": cocktail.strDescription,
-      "Ingredients": cocktail.strIngredients,
-      "Preparation": cocktail.strPreparation,
-      "Garnish": cocktail.strGarnish,
-      "Image_url": cocktail.strImageURL,
-      "Category": cocktail.strCategory,
-      'Categories': cocktail.strCategories,
-      "DetailedFlavors": cocktail.strDetailedFlavors,
-      "Rim": cocktail.strRim,
-      "Strength": cocktail.strStrength,
-      "Mixers": cocktail.strMixers,
-      "Main_Flavor": cocktail.strMainFlavor,
-      // Add any other cocktail information you want to save
-    });
-
-    setState(() {
-      isLiked = true;
-    });
-  }
-
-  void _removeFromFavorites(Cocktail cocktail) async {
-    // Get the current user ID
-    final userId = FirebaseAuth.instance.currentUser?.uid;
-
-    // Remove the cocktail from the user's favorites collection
-    await FirebaseFirestore.instance
-        .collection('Favorite')
-        .doc(userId)
-        .collection('FavoriteCocktails')
-        .doc(cocktail.cocktailID)
-        .delete();
-
-    setState(() {
-      isLiked = false;
-    });
-  }
-
-  Future<bool> addToFavoritesCallback(bool isLiked) async {
-    if (isLiked) {
-      _removeFromFavorites(widget.cocktail);
-    } else {
-      _addToFavorites(widget.cocktail);
-    }
-    return !isLiked;
-  }
 
   @override
   void initState() {
@@ -85,22 +22,21 @@ class _CocktailCardPageState extends State<CocktailCardPage> {
   }
 
   void _checkIfLiked() async {
-    // Get the current user ID
-    final userId = FirebaseAuth.instance.currentUser?.uid;
+    final isFavorite =
+        await FavoritesService.checkIfLiked(widget.cocktail.cocktailID);
 
-    // Check if the cocktail is in the user's favorites collection
-    final cocktailDoc = await FirebaseFirestore.instance
-        .collection('Favorite')
-        .doc(userId)
-        .collection('FavoriteCocktails')
-        .doc(widget.cocktail.cocktailID)
-        .get();
+    setState(() {
+      isLiked = isFavorite;
+    });
+  }
 
-    if (cocktailDoc.exists) {
-      setState(() {
-        isLiked = true;
-      });
+  Future<bool> addToFavoritesCallback(bool isLiked) async {
+    if (isLiked) {
+      FavoritesService.removeFromFavorites(widget.cocktail);
+    } else {
+      FavoritesService.addToFavorites(widget.cocktail);
     }
+    return !isLiked;
   }
 
   @override
@@ -231,19 +167,6 @@ class _CocktailCardPageState extends State<CocktailCardPage> {
                 onTap: addToFavoritesCallback,
               ),
               Text("Add to Favorites"),
-              // const SizedBox(
-              //   width: 30,
-              // ),
-              // LikeButton(
-              //   onTap: addToFavoritesCallback,
-              //   likeBuilder: (isLiked) {
-              //     return Icon(
-              //       Icons.add_circle,
-              //       color: Colors.grey.shade500,
-              //       size: 30,
-              //     );
-              //   },
-              // ),
             ],
           ),
         ],

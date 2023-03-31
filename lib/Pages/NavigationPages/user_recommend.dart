@@ -1,5 +1,5 @@
 import 'package:drinkly_cocktails/Pages/FinderPages/FinderFirstTab.dart';
-import 'package:drinkly_cocktails/Pages/FinderPages/FinderSecondTab.dart';
+import 'package:drinkly_cocktails/Pages/FinderPages/SearchBarTab.dart';
 import 'package:flutter/material.dart';
 
 class FinderPage extends StatelessWidget {
@@ -40,7 +40,7 @@ class FinderPage extends StatelessWidget {
             Expanded(
               child: TabBarView(children: [
                 FinderFirstTab(),
-                FinderSecondTab(),
+                SearchBarTab(),
               ]),
             )
           ],
