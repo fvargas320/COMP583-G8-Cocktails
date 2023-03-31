@@ -31,7 +31,7 @@ class _SearchBarTabState extends State<SearchBarTab> {
   late final _facetList = FacetList(
       searcher: _productsSearcher,
       filterState: _filterState,
-      attribute: "Categories");
+      attribute: "Main_Flavor");
 
   Stream<SearchMetadata> get _searchMetadata =>
       _productsSearcher.responses.map(SearchMetadata.fromResponse);
@@ -108,6 +108,7 @@ class _SearchBarTabState extends State<SearchBarTab> {
   Widget _filters(BuildContext context) => Scaffold(
         appBar: AppBar(
           title: const Text('Filters'),
+          backgroundColor: Colors.black54,
         ),
         body: StreamBuilder<List<SelectableItem<Facet>>>(
             stream: _facetList.facets,
@@ -198,14 +199,6 @@ class _SearchBarTabState extends State<SearchBarTab> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _mainScaffoldKey,
-      appBar: AppBar(
-        title: const Text('Algolia & Flutter'),
-        actions: [
-          IconButton(
-              onPressed: () => _mainScaffoldKey.currentState?.openEndDrawer(),
-              icon: const Icon(Icons.filter_list_sharp))
-        ],
-      ),
       endDrawer: Drawer(
         child: _filters(context),
       ),
@@ -213,16 +206,29 @@ class _SearchBarTabState extends State<SearchBarTab> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            SizedBox(
-                height: 44,
-                child: TextField(
-                  controller: _searchTextController,
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'Enter a search term',
-                    prefixIcon: Icon(Icons.search),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: SizedBox(
+                    height: 44,
+                    child: TextField(
+                      controller: _searchTextController,
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'Enter a search term',
+                        prefixIcon: Icon(Icons.search),
+                      ),
+                    ),
                   ),
-                )),
+                ),
+                IconButton(
+                  onPressed: () =>
+                      _mainScaffoldKey.currentState?.openEndDrawer(),
+                  icon: const Icon(Icons.filter_list_sharp),
+                ),
+              ],
+            ),
             StreamBuilder<SearchMetadata>(
               stream: _searchMetadata,
               builder: (context, snapshot) {
