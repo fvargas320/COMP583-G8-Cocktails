@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
+import '../../Services/favorites_service.dart';
 import '../../data_model/HitsPage.dart';
 import '../../data_model/SearchMetadata.dart';
 import '../CocktailPages/cocktail_card_page.dart';
@@ -18,12 +19,19 @@ class SearchBarTab extends StatefulWidget {
 class _SearchBarTabState extends State<SearchBarTab> {
   final _productsSearcher = HitsSearcher(
       applicationID: 'HNELVCXNJF',
-      apiKey: '8e08827d067077ab2ce141b74e215b58',
+      apiKey: 'eadf52d2df93b72c6f7a543221712390',
       indexName: 'Cocktails');
 
   final _searchTextController = TextEditingController();
   final PagingController<int, Cocktail> _pagingController =
       PagingController(firstPageKey: 0);
+  final _filterState = FilterState();
+  final GlobalKey<ScaffoldState> _mainScaffoldKey = GlobalKey();
+
+  late final _facetList = FacetList(
+      searcher: _productsSearcher,
+      filterState: _filterState,
+      attribute: "Categories");
 
   Stream<SearchMetadata> get _searchMetadata =>
       _productsSearcher.responses.map(SearchMetadata.fromResponse);
@@ -31,9 +39,36 @@ class _SearchBarTabState extends State<SearchBarTab> {
   Stream<HitsPage> get _searchPage =>
       _productsSearcher.responses.map(HitsPage.fromResponse);
 
+  bool isLiked = false;
+
+  Future<bool> _checkIfLiked(Cocktail cocktail) async {
+    final isFavorite = await FavoritesService.checkIfLiked(cocktail.cocktailID);
+
+    setState(() {
+      isLiked = isFavorite;
+    });
+
+    return isLiked;
+  }
+
+  Future<bool> addToFavoritesCallback(bool isLiked, Cocktail cocktail) async {
+    _checkIfLiked(cocktail);
+    //isLiked = _checkIfLiked(cocktail) as bool;
+    if (isLiked) {
+      FavoritesService.removeFromFavorites(cocktail);
+    } else {
+      FavoritesService.addToFavorites(cocktail);
+    }
+    setState(() {
+      this.isLiked = !isLiked;
+    });
+    return !isLiked;
+  }
+
   @override
   void initState() {
     super.initState();
+
     _searchTextController.addListener(
       () => _productsSearcher.applyState(
         (state) => state.copyWith(
@@ -55,6 +90,9 @@ class _SearchBarTabState extends State<SearchBarTab> {
 
     _pagingController.addPageRequestListener((pageKey) =>
         _productsSearcher.applyState((state) => state.copyWith(page: pageKey)));
+
+    _productsSearcher.connectFilterState(_filterState);
+    _filterState.filters.listen((_) => _pagingController.refresh());
   }
 
   @override
@@ -62,8 +100,38 @@ class _SearchBarTabState extends State<SearchBarTab> {
     _searchTextController.dispose();
     _productsSearcher.dispose();
     _pagingController.dispose();
+    _filterState.dispose();
+    _facetList.dispose();
     super.dispose();
   }
+
+  Widget _filters(BuildContext context) => Scaffold(
+        appBar: AppBar(
+          title: const Text('Filters'),
+        ),
+        body: StreamBuilder<List<SelectableItem<Facet>>>(
+            stream: _facetList.facets,
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return const SizedBox.shrink();
+              }
+              final selectableFacets = snapshot.data!;
+              return ListView.builder(
+                  padding: const EdgeInsets.all(8),
+                  itemCount: selectableFacets.length,
+                  itemBuilder: (_, index) {
+                    final selectableFacet = selectableFacets[index];
+                    return CheckboxListTile(
+                      value: selectableFacet.isSelected,
+                      title: Text(
+                          "${selectableFacet.item.value} (${selectableFacet.item.count})"),
+                      onChanged: (_) {
+                        _facetList.toggle(selectableFacet.item.value);
+                      },
+                    );
+                  });
+            }),
+      );
 
   Widget _hits(BuildContext context) => PagedListView<int, Cocktail>(
       pagingController: _pagingController,
@@ -85,18 +153,20 @@ class _SearchBarTabState extends State<SearchBarTab> {
                       SlidableAction(
                         // An action can be bigger than the others.
                         flex: 1,
-                        onPressed: (context) => print("HI"),
                         backgroundColor: Colors.blueAccent,
                         foregroundColor: Colors.white,
-                        icon: Icons.favorite,
+                        icon: isLiked ? Icons.favorite : Icons.favorite_border,
+                        onPressed: (context) => print("JH"),
+
                         label: 'Favorite',
                       ),
                       SlidableAction(
                         // An action can be bigger than the others.
                         flex: 1,
-                        onPressed: (context) => print("HI"),
+                        onPressed: (context) => print("JH"),
                         backgroundColor: Colors.green,
                         foregroundColor: Colors.white,
+                        //icon: Icons.add_circle,
                         icon: Icons.add_circle,
                         label: 'Lists',
                       ),
@@ -127,6 +197,18 @@ class _SearchBarTabState extends State<SearchBarTab> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _mainScaffoldKey,
+      appBar: AppBar(
+        title: const Text('Algolia & Flutter'),
+        actions: [
+          IconButton(
+              onPressed: () => _mainScaffoldKey.currentState?.openEndDrawer(),
+              icon: const Icon(Icons.filter_list_sharp))
+        ],
+      ),
+      endDrawer: Drawer(
+        child: _filters(context),
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
