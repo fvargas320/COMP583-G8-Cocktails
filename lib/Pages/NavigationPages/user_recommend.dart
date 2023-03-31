@@ -21,6 +21,13 @@ class FinderPage extends StatelessWidget {
                 indicatorColor: Colors.deepPurpleAccent,
                 tabs: [
                   Tab(
+                    text: "Search",
+                    icon: Icon(
+                      Icons.search,
+                      color: Colors.deepPurple,
+                    ),
+                  ),
+                  Tab(
                     text: "Recommendations",
                     icon: Image.asset(
                       'assets/icons/recommend.png',
@@ -29,18 +36,11 @@ class FinderPage extends StatelessWidget {
                     ),
                     // Image.asset('lib/icons/bottle.png')
                   ),
-                  Tab(
-                    text: "Search",
-                    icon: Icon(
-                      Icons.search,
-                      color: Colors.deepPurple,
-                    ),
-                  ),
                 ]),
             Expanded(
               child: TabBarView(children: [
-                FinderFirstTab(),
                 SearchBarTab(),
+                FinderFirstTab(),
               ]),
             )
           ],
