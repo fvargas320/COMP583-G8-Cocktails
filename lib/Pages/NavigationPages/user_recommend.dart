@@ -1,4 +1,4 @@
-import 'package:drinkly_cocktails/Pages/FinderPages/FinderFirstTab.dart';
+import 'package:drinkly_cocktails/Pages/FinderPages/RecommendationsPage.dart';
 import 'package:drinkly_cocktails/Pages/FinderPages/SearchBarTab.dart';
 import 'package:flutter/material.dart';
 
@@ -40,7 +40,7 @@ class FinderPage extends StatelessWidget {
             Expanded(
               child: TabBarView(children: [
                 SearchBarTab(),
-                FinderFirstTab(),
+                AlgoliaRecommendationWidget(),
               ]),
             )
           ],

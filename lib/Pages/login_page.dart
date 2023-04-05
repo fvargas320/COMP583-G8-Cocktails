@@ -61,16 +61,17 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(
-                  Icons.local_drink_rounded,
-                  size: 200,
-                  color: Colors.deepPurple,
-                ),
-                const SizedBox(height: 20),
+                // const Icon(
+                //   Icons.local_drink_rounded,
+                //   size: 200,
+                //   color: Colors.deepPurple,
+                // ),
+                Image.asset('assets/icons/logo.png'),
+                const SizedBox(height: 10),
 
                 //Hello
                 const Text(
-                  "Welcome to Drinkly",
+                  "Welcome",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 30,

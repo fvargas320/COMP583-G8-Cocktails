@@ -3,7 +3,6 @@ import 'package:drinkly_cocktails/data_model/cocktail.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-
 import '../../Services/favorites_service.dart';
 import '../../data_model/HitsPage.dart';
 import '../../data_model/SearchMetadata.dart';
