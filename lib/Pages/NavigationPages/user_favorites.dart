@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -97,24 +98,32 @@ class _FavoritesPageState extends State<FavoritesPage> {
                       ),
                     ],
                   ),
-                  child: ListTile(
-                    leading: Image.network(
-                      cocktail.strImageURL,
+                  child: SizedBox(
+                    width: double.infinity, // or specify a fixed width
+                    child: ListTile(
+                      leading: CachedNetworkImage(
+                        imageUrl: cocktail.strImageURL,
+                        placeholder: (context, url) =>
+                            CircularProgressIndicator(),
+                        errorWidget: (context, url, error) => CachedNetworkImage(
+                            imageUrl:
+                                "https://cdn-icons-png.flaticon.com/512/2748/2748558.png"),
+                      ),
+                      title: Text(cocktail.strCocktailName ?? ''),
+                      subtitle: Text(
+                        "${cocktail.strMainFlavor} Flavor, ${cocktail.strCategories}",
+                        overflow: TextOverflow.fade,
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                CocktailCardPage(cocktail: cocktail),
+                          ),
+                        );
+                      },
                     ),
-                    title: Text(cocktail.strCocktailName ?? ''),
-                    subtitle: Text(
-                      "${cocktail.strMainFlavor} Flavor, ${cocktail.strCategories}",
-                      overflow: TextOverflow.fade,
-                    ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              CocktailCardPage(cocktail: cocktail),
-                        ),
-                      );
-                    },
                   ),
                 );
               },

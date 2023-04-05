@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -66,19 +67,47 @@ class _GridCocktailsState extends State<GridCocktails> {
               child: AspectRatio(
                 aspectRatio: 4 / 3,
                 child: Material(
-                  child: Ink.image(
-                    image:
-                        NetworkImage(widget.cocktail_list[index].strImageURL),
-                    fit: BoxFit.cover,
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            PageTransition(
-                                type: PageTransitionType.fade,
-                                child: CocktailCardPage(
-                                    cocktail: widget.cocktail_list[index])));
-                      },
+                  child:
+                      // Ink.image(
+                      //   image:
+                      //       NetworkImage(widget.cocktail_list[index].strImageURL),
+                      //   fit: BoxFit.cover,
+                      //   child: InkWell(
+                      //     onTap: () {
+                      //       Navigator.push(
+                      //           context,
+                      //           PageTransition(
+                      //               type: PageTransitionType.fade,
+                      //               child: CocktailCardPage(
+                      //                   cocktail: widget.cocktail_list[index])));
+                      //     },
+                      //   ),
+                      // ),
+
+                      GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          PageTransition(
+                              type: PageTransitionType.fade,
+                              child: CocktailCardPage(
+                                  cocktail: widget.cocktail_list[index])));
+                    },
+                    child: CachedNetworkImage(
+                      imageUrl: widget.cocktail_list[index].strImageURL,
+                      imageBuilder: (context, imageProvider) => Container(
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: imageProvider,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      placeholder: (context, url) =>
+                          CircularProgressIndicator(),
+                      errorWidget: (context, url, error) => CachedNetworkImage(
+                          imageUrl:
+                              "https://cdn-icons-png.flaticon.com/512/2748/2748558.png"),
                     ),
                   ),
                 ),

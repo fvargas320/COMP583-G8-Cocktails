@@ -69,12 +69,8 @@ class _RegisterPageState extends State<RegisterPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(
-                  Icons.local_drink_rounded,
-                  size: 200,
-                  color: Colors.deepPurple,
-                ),
-                const SizedBox(height: 20),
+                Image.asset('assets/icons/logo.png'),
+                const SizedBox(height: 10),
 
                 //Hello
                 const Text(

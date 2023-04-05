@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:drinkly_cocktails/data_model/cocktail.dart';
 import 'package:flutter/material.dart';
 import 'package:like_button/like_button.dart';
@@ -59,11 +60,12 @@ class _CocktailCardPageState extends State<CocktailCardPage> {
           const SizedBox(
             height: 10,
           ),
-          Image.network(
-            widget.cocktail.strImageURL,
-            height: 400,
-            width: 400,
-            //fit: BoxFit.fitHeight,
+          CachedNetworkImage(
+            imageUrl: widget.cocktail.strImageURL,
+            placeholder: (context, url) => CircularProgressIndicator(),
+            errorWidget: (context, url, error) => CachedNetworkImage(
+                imageUrl:
+                    "https://cdn-icons-png.flaticon.com/512/2748/2748558.png"),
           ),
           const SizedBox(
             height: 10,
