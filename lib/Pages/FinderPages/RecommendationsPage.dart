@@ -3,42 +3,50 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class RecommendationsTab {
-  final String _appId;
-  final String _apiKey;
-  final String _indexName;
+  String _appId;
+  String _apiKey;
+  String _indexName;
 
   RecommendationsTab(this._appId, this._apiKey, this._indexName);
 
   Future<List<Map<String, dynamic>>> getRecommendations(
-      String query, int nbHits, String indexName) async {
-    final url = 'https://' +
-        _appId +
-        '-dsn.algolia.net/1/indexes/' +
-        //indexName +
-        '*/recommendations';
+      String cocktail_ID) async {
+    final url =
+        'https://' + _appId + '-dsn.algolia.net/1/indexes/*/recommendations';
     final headers = {
+      'Content-Type': 'application/json',
       'X-Algolia-API-Key': _apiKey,
-      'X-Algolia-Application-Id': _appId,
-      'Content-Type': 'application/json'
+      'X-Algolia-Application-Id': _appId
     };
-    final body = [
-      {
-        'indexName': 'Cocktails',
-        'query': query,
-        'model': 'related-products',
-        'threshold': 0,
-        'maxRecommendations': nbHits
-      }
-    ];
+    final body = {
+      'requests': [
+        {
+          'indexName': _indexName,
+          'model': 'related-products',
+          'objectID': cocktail_ID,
+          'threshold': 0,
+          'maxRecommendations': 10,
+        }
+      ]
+    };
 
     final response = await http.post(Uri.parse(url),
         headers: headers, body: jsonEncode(body));
-    print(response.body);
     final responseBody = jsonDecode(response.body);
-    print("HERE1");
-    print(responseBody['hits']);
-    print("HERE2");
-    return responseBody['hits'].cast<Map<String, dynamic>>();
+
+    final hits = responseBody['results'][0]['hits'];
+
+    List<Map<String, dynamic>> results = [];
+    print(hits);
+    hits.forEach((hit) {
+      results.add({
+        'Cocktail_Name': hit['Cocktail_Name'],
+        'Cocktail_Image': hit['Image_url'],
+        'Cocktail_ID': hit['Cocktail_ID']
+      });
+    });
+
+    return results;
   }
 }
 
@@ -67,16 +75,33 @@ class _AlgoliaRecommendationWidgetState
           ? Center(child: CircularProgressIndicator())
           : _recommendations.isEmpty
               ? Center(child: Text('No recommendations.'))
-              : ListView.builder(
-                  itemCount: _recommendations.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    final result = _recommendations[index];
-                    return ListTile(
-                      title: Text(result['Cocktail_Name']),
-                      subtitle: Text("HI"),
-                      // trailing: Text('\$${result['price']}'),
-                    );
-                  },
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        'Because you liked Margarita',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: _recommendations.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          final result = _recommendations[index];
+                          return ListTile(
+                            leading: Image.network(result['Cocktail_Image']),
+                            title: Text(result['Cocktail_Name']),
+                            onTap: () {},
+                          );
+                        },
+                      ),
+                    ),
+                  ],
                 ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
@@ -88,10 +113,7 @@ class _AlgoliaRecommendationWidgetState
 
           try {
             final results = await _algoliaRecommend.getRecommendations(
-              '1662',
-              10,
-              'Cocktails',
-            ); //String query, int nbHits, List<String> indexNames
+                '1662'); //String query, int nbHits, List<String> indexNames
             print(results);
 
             if (!mounted) return; // add check to ensure widget is still mounted
