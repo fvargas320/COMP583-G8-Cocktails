@@ -15,43 +15,80 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Settings"),
+        title: Text('Settings'),
         backgroundColor: Colors.grey.shade900,
+        elevation: 5,
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              "User Settings",
-              style: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-                fontSize: 25,
-              ),
+      body: ListView(
+        children: <Widget>[
+          UserAccountsDrawerHeader(
+            accountName: Text('John Doe'),
+            accountEmail: Text('johndoe@example.com'),
+            currentAccountPicture: CircleAvatar(
+              backgroundImage: AssetImage('assets/icons/profile_pic.png'),
             ),
-            const SizedBox(height: 25),
-            Text(
-              'WELCOME  ${user?.email}',
-              style: const TextStyle(fontSize: 20, color: Colors.black),
-            ),
-            const SizedBox(height: 25),
-            MaterialButton(
-              onPressed: () {
-                FirebaseAuth.instance.signOut();
-              },
-              color: Colors.deepPurpleAccent,
-              child: const Text(
-                "SIGN OUT",
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 30,
-                    color: Colors.white),
-              ),
-            )
-          ],
-        ),
+          ),
+          ListTile(
+            title: Text('App Version'),
+            subtitle: Text('1.0.0'),
+          ),
+          ListTile(
+            title: Text('Add New List'),
+            onTap: () {
+              // TODO: Implement add new list functionality
+            },
+          ),
+          ListTile(
+            title: Text('Sign Out'),
+            onTap: () {
+              // TODO: Implement sign out functionality
+            },
+          ),
+        ],
       ),
     );
   }
 }
+
+
+
+
+//
+//
+// class SettingsPage extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text('Settings'),
+//       ),
+//       body: ListView(
+//         children: <Widget>[
+//           UserAccountsDrawerHeader(
+//             accountName: Text('John Doe'),
+//             accountEmail: Text('johndoe@example.com'),
+//             currentAccountPicture: CircleAvatar(
+//               backgroundImage: AssetImage('assets/profile_pic.png'),
+//             ),
+//           ),
+//           ListTile(
+//             title: Text('App Version'),
+//             subtitle: Text('1.0.0'),
+//           ),
+//           ListTile(
+//             title: Text('Add New List'),
+//             onTap: () {
+//               // TODO: Implement add new list functionality
+//             },
+//           ),
+//           ListTile(
+//             title: Text('Sign Out'),
+//             onTap: () {
+//               // TODO: Implement sign out functionality
+//             },
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
