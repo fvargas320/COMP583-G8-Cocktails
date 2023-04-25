@@ -1,6 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import '../../data_model/cocktail.dart';
 
 class RecommendationsTab {
   String _appId;
@@ -25,7 +29,7 @@ class RecommendationsTab {
           'model': 'related-products',
           'objectID': cocktail_ID,
           'threshold': 0,
-          'maxRecommendations': 10,
+          'maxRecommendations': 5,
         }
       ]
     };
@@ -62,6 +66,98 @@ class _AlgoliaRecommendationWidgetState
   bool _isLoading = false;
   final _algoliaRecommend = RecommendationsTab(
       'HNELVCXNJF', 'eadf52d2df93b72c6f7a543221712390', 'Cocktails');
+  final db = FirebaseFirestore.instance;
+  final user = FirebaseAuth.instance.currentUser;
+  List<Cocktail> _favoriteCocktails = [];
+
+  Future<void> _fetchFavorites() async {
+    final favoritesSnapshot = await db
+        .collection('Favorite')
+        .doc(user?.uid)
+        .collection('FavoriteCocktails')
+        .get();
+    final favoriteCocktails = <Cocktail>[];
+    for (final doc in favoritesSnapshot.docs) {
+      final data = doc.data();
+      if (data == null) continue;
+      final cocktail = Cocktail.fromMap(data as Map<String, dynamic>);
+      favoriteCocktails.add(cocktail);
+    }
+
+    setState(() {
+      _favoriteCocktails = favoriteCocktails;
+    });
+  }
+
+  Future<List<Cocktail>> getRecommendationsFromCocktail(
+      Cocktail cocktail) async {
+    List<Cocktail> cocktailList = [];
+    final results =
+        await _algoliaRecommend.getRecommendations(cocktail.cocktailID);
+
+    for (var i = 0; i < 5; i++) {
+      var newCocktail = Cocktail.fromMap(results[i]);
+      cocktailList.add(newCocktail);
+    }
+    return cocktailList;
+  }
+
+  bool isLiked = true;
+  void _removeFromFavorites(Cocktail cocktail) async {
+    // Get the current user ID
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+
+    // Remove the cocktail from the user's favorites collection
+    await FirebaseFirestore.instance
+        .collection('Favorite')
+        .doc(userId)
+        .collection('FavoriteCocktails')
+        .doc(cocktail.cocktailID)
+        .delete();
+
+    setState(() {
+      isLiked = false;
+      _fetchFavorites();
+    });
+
+    // Show a message pop-up to indicate that the cocktail has been deleted
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text('$cocktail dismissed')));
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchFavorites();
+    _loadRecommendations();
+  }
+
+  Future<void> _loadRecommendations() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final results = await _algoliaRecommend.getRecommendations(
+        '530',
+      ); //String query, int nbHits, List<String> indexNames
+
+      if (!mounted) return; // add check to ensure widget is still mounted
+
+      setState(() {
+        _recommendations.addAll(results);
+        _isLoading = false;
+      });
+    } catch (e) {
+      if (!mounted) return; // add check to ensure widget is still mounted
+
+      setState(() {
+        _isLoading = false;
+      });
+
+      print('Error retrieving recommendations: $e');
+    }
+  }
 
   @override
   void dispose() {
@@ -81,7 +177,7 @@ class _AlgoliaRecommendationWidgetState
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
-                        'Because you liked Margarita',
+                        'Because you liked name here}',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -104,34 +200,7 @@ class _AlgoliaRecommendationWidgetState
                   ],
                 ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          if (!mounted) return; // add check to ensure widget is still mounted
-
-          setState(() {
-            _isLoading = true;
-          });
-
-          try {
-            final results = await _algoliaRecommend.getRecommendations(
-                '1662'); //String query, int nbHits, List<String> indexNames
-            print(results);
-
-            if (!mounted) return; // add check to ensure widget is still mounted
-
-            setState(() {
-              _recommendations.addAll(results);
-              _isLoading = false;
-            });
-          } catch (e) {
-            if (!mounted) return; // add check to ensure widget is still mounted
-
-            setState(() {
-              _isLoading = false;
-            });
-
-            print('Error retrieving recommendations: $e');
-          }
-        },
+        onPressed: _loadRecommendations,
         child: Icon(Icons.refresh),
       ),
     );
