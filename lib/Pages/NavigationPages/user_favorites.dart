@@ -90,11 +90,22 @@ class _FavoritesPageState extends State<FavoritesPage> {
                       SlidableAction(
                         // An action can be bigger than the others.
                         flex: 1,
-                        onPressed: (context) => _removeFromFavorites(cocktail),
-                        backgroundColor: Colors.red,
+                        backgroundColor: Colors.blueAccent,
                         foregroundColor: Colors.white,
-                        icon: Icons.delete,
-                        label: 'Delete',
+                        icon: isLiked ? Icons.favorite : Icons.favorite_border,
+                        onPressed: (context) => print("JH"),
+
+                        label: 'Favorite',
+                      ),
+                      SlidableAction(
+                        // An action can be bigger than the others.
+                        flex: 1,
+                        onPressed: (context) => print("JH"),
+                        backgroundColor: Colors.green,
+                        foregroundColor: Colors.white,
+                        //icon: Icons.add_circle,
+                        icon: Icons.add_circle,
+                        label: 'Lists',
                       ),
                     ],
                   ),
