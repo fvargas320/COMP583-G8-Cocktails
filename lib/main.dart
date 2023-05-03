@@ -1,8 +1,6 @@
-import 'package:drinkly_cocktails/Pages/login_page.dart';
 import 'package:drinkly_cocktails/Authentication/main_page.dart';
 import 'package:flutter/material.dart';
 
-import 'Pages/homepage.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 void main() async {

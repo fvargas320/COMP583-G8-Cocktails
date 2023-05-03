@@ -22,14 +22,6 @@ class _SettingsPageState extends State<SettingsPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
-              "User Settings",
-              style: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-                fontSize: 25,
-              ),
-            ),
             const SizedBox(height: 25),
             Text(
               'WELCOME  ${user?.email}',
