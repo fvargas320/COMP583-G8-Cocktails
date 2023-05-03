@@ -160,6 +160,117 @@ class _AlgoliaRecommendationWidgetState
     });
   }
 
+  Future<void> _showCreateListDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Creating New List'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Please fill in data for list.'),
+                Padding(padding: const EdgeInsets.symmetric(vertical: 8.0)),
+                TextField(
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintText: 'Enter a List Name',
+                  ),
+                ),
+                Padding(padding: const EdgeInsets.symmetric(vertical: 8.0)),
+                TextField(
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintText: 'Enter a description for list',
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Create List'),
+              onPressed: () {
+                //Call Create List
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showListDialog() async {
+    var isChecked = false;
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Add to List'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Select a list to Add To..'),
+                CheckboxListTile(
+                  title: Text("List #1"),
+                  subtitle: Text("Description Here..."),
+                  checkColor: Colors.white,
+                  value: isChecked,
+                  onChanged: (bool? value) {
+                    setState(() {
+                      isChecked = value!;
+                    });
+                  },
+                ),
+                CheckboxListTile(
+                  title: Text("List #2"),
+                  subtitle: Text("Description Here..."),
+                  checkColor: Colors.white,
+                  value: isChecked,
+                  onChanged: (bool? value) {
+                    setState(() {
+                      isChecked = value!;
+                    });
+                  },
+                ),
+                CheckboxListTile(
+                  title: Text("List #3"),
+                  subtitle: Text("Description Here..."),
+                  checkColor: Colors.white,
+                  value: isChecked,
+                  onChanged: (bool? value) {
+                    setState(() {
+                      isChecked = value!;
+                    });
+                  },
+                ),
+                Padding(padding: const EdgeInsets.symmetric(vertical: 8.0)),
+                Text('Want to add to a new list?'),
+                TextButton(
+                  child: const Text('Create a list'),
+                  onPressed: () {
+                    _showCreateListDialog();
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Submit'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Future<bool> addToFavoritesCallback(Cocktail cocktail) async {
     final isLiked = await FavoritesService.checkIfLiked(cocktail.cocktailID);
 
@@ -294,7 +405,7 @@ class _AlgoliaRecommendationWidgetState
                                                 // An action can be bigger than the others.
                                                 flex: 1,
                                                 onPressed: (context) =>
-                                                    print("JH"),
+                                                    _showListDialog(),
                                                 backgroundColor: Colors.green,
                                                 foregroundColor: Colors.white,
                                                 //icon: Icons.add_circle,
