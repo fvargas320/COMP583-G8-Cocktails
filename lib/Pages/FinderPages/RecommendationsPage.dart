@@ -5,6 +5,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import '../../Services/favorites_service.dart';
 import '../../data_model/cocktail.dart';
 import '../CocktailPages/cocktail_card_page.dart';
 
@@ -133,34 +134,41 @@ class _AlgoliaRecommendationWidgetState
     return finalCocktailList;
   }
 
-  bool isLiked = true;
-  void _removeFromFavorites(Cocktail cocktail) async {
-    // Get the current user ID
-    final userId = FirebaseAuth.instance.currentUser?.uid;
-
-    // Remove the cocktail from the user's favorites collection
-    await FirebaseFirestore.instance
-        .collection('Favorite')
-        .doc(userId)
-        .collection('FavoriteCocktails')
-        .doc(cocktail.cocktailID)
-        .delete();
-
-    setState(() {
-      isLiked = false;
-      _fetchFavorites();
-    });
-
-    // Show a message pop-up to indicate that the cocktail has been deleted
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text('$cocktail dismissed')));
-  }
+  //bool isLiked = false;
 
   @override
   void initState() {
     super.initState();
     _fetchFavorites();
     _loadRecommendations();
+  }
+
+  bool _isCocktailInFavorites(Cocktail cocktail) {
+    return _favoriteCocktails.any((c) => c.cocktailID == cocktail.cocktailID);
+  }
+
+  void _toggleFavorite(Cocktail cocktail) {
+    setState(() {
+      if (_isCocktailInFavorites(cocktail)) {
+        _favoriteCocktails
+            .removeWhere((c) => c.cocktailID == cocktail.cocktailID);
+        FavoritesService.removeFromFavorites(cocktail);
+      } else {
+        _favoriteCocktails.add(cocktail);
+        FavoritesService.addToFavorites(cocktail);
+      }
+    });
+  }
+
+  Future<bool> addToFavoritesCallback(Cocktail cocktail) async {
+    final isLiked = await FavoritesService.checkIfLiked(cocktail.cocktailID);
+
+    if (isLiked) {
+      FavoritesService.removeFromFavorites(cocktail);
+    } else {
+      FavoritesService.addToFavorites(cocktail);
+    }
+    return !isLiked;
   }
 
   Future<void> _loadRecommendations() async {
@@ -272,11 +280,13 @@ class _AlgoliaRecommendationWidgetState
                                                 backgroundColor:
                                                     Colors.blueAccent,
                                                 foregroundColor: Colors.white,
-                                                icon: isLiked
+                                                icon: _isCocktailInFavorites(
+                                                        recommendedCocktail)
                                                     ? Icons.favorite
                                                     : Icons.favorite_border,
                                                 onPressed: (context) =>
-                                                    print("JH"),
+                                                    _toggleFavorite(
+                                                        recommendedCocktail),
 
                                                 label: 'Favorite',
                                               ),
@@ -308,19 +318,6 @@ class _AlgoliaRecommendationWidgetState
                                               maxLines: 2,
                                               overflow: TextOverflow.ellipsis,
                                             ),
-                                            // trailing: IconButton(
-                                            //   icon: Icon(Icons.favorite,
-                                            //       color: isLiked
-                                            //           ? Colors.red
-                                            //           : Colors.grey),
-                                            //   onPressed: () {
-                                            //     setState(() {
-                                            //       isLiked = !isLiked;
-                                            //     });
-                                            //     _removeFromFavorites(
-                                            //         recommendedCocktail);
-                                            //   },
-                                            // ),
                                             onTap: () {
                                               Navigator.push(
                                                 context,
