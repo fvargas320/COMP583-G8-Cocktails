@@ -1,6 +1,11 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:drinkly_cocktails/Pages/CocktailPages/grid_cocktails_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:readmore/readmore.dart';
 
 import '../../Services/userLists_service.dart';
 import '../../data_model/cocktail.dart';
@@ -36,6 +41,7 @@ class ListsPageWidget extends State<ListsPage> {
           .get();
 
       List<String> cocktailIDs = List.from(snapshot.data()!['cocktailIDs']);
+
       print(cocktailIDs);
 
       List<Cocktail> cocktails = [];
@@ -48,6 +54,19 @@ class ListsPageWidget extends State<ListsPage> {
     print(lists);
 
     return lists;
+  }
+
+  Future<String> getListDescription(String listName) async {
+    DocumentSnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
+        .instance
+        .collection('User Lists')
+        .doc(FirebaseAuth.instance.currentUser?.uid)
+        .collection('Lists')
+        .doc(listName)
+        .get();
+
+    String listDesc = snapshot.data()?['listDesc'];
+    return listDesc ?? '';
   }
 
   Future<Cocktail> getCocktailFromFirestore(String cocktail_ID) async {
@@ -89,71 +108,253 @@ class ListsPageWidget extends State<ListsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<List<Cocktail>>>(
-      future: getAllLists(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        } else if (!snapshot.hasData) {
-          return Center(child: Text('No data found.'));
-        } else {
-          List<List<Cocktail>> lists = snapshot.data!;
-          return ListView.builder(
-            itemCount: lists.length,
-            itemBuilder: (context, index) {
-              List<Cocktail> cocktails = lists[index];
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
-                    ),
-                    child: Text(
-                      '${listNames[index]} (${cocktails.length} cocktails)',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: cocktails.length,
-                    itemBuilder: (context, index) {
-                      Cocktail cocktail = cocktails[index];
-                      return ListTile(
-                        leading: Image.network(
-                          cocktail.strImageURL,
-                          width: 40,
-                          height: 40,
-                          fit: BoxFit.cover,
+    return Column(
+      children: [
+        Expanded(
+          child: FutureBuilder<List<List<Cocktail>>>(
+            future: getAllLists(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              } else if (!snapshot.hasData) {
+                return Center(child: Text('No data found.'));
+              } else {
+                List<List<Cocktail>> lists = snapshot.data!;
+
+                return ListView.builder(
+                  itemCount: lists.length,
+                  itemBuilder: (context, index) {
+                    List<Cocktail> cocktails = lists[index];
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
+                          child: Row(
+                            children: [
+                              Text(
+                                '${listNames[index]} (Total: ${cocktails.length})',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                ),
+                              ),
+                              PopupMenuButton(
+                                itemBuilder: (context) => [
+                                  PopupMenuItem(
+                                    child: Text('Edit'),
+                                    value: 'edit',
+                                  ),
+                                  PopupMenuItem(
+                                    child: Text(
+                                      'Delete',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.red,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                    value: 'delete',
+                                  ),
+                                ],
+                                onSelected: (value) {
+                                  if (value == 'edit') {
+                                    // handle edit menu option
+                                  } else if (value == 'delete') {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: Text('Delete List'),
+                                          content: Text(
+                                              'Are you sure you want to delete this '
+                                              'list? There is no way to restore it'),
+                                          actions: <Widget>[
+                                            TextButton(
+                                              child: Text('Cancel'),
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                            ),
+                                            TextButton(
+                                              child: Text(
+                                                'Delete',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.red,
+                                                  fontSize: 14,
+                                                ),
+                                              ),
+                                              onPressed: () {
+                                                ListsService.deleteEntireList(
+                                                    listNames[index]);
+                                                Navigator.of(context).pop();
+                                                setState(() {});
+                                              },
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  }
+                                },
+                              ),
+                            ],
+                          ),
                         ),
-                        title: Text(cocktail.strCocktailName),
-                        subtitle: Text(cocktail.strCategory),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  CocktailCardPage(cocktail: cocktail),
-                            ),
-                          );
-                        },
-                      );
-                    },
-                  ),
-                ],
-              );
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
+                          child: FutureBuilder<String>(
+                            future: getListDescription(listNames[index]),
+                            builder: (BuildContext context,
+                                AsyncSnapshot<String> snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return Text(
+                                  'Loading...',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                  ),
+                                );
+                              } else if (snapshot.hasError) {
+                                return Text(
+                                  'Error: ${snapshot.error}',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                  ),
+                                );
+                              } else {
+                                return ReadMoreText(
+                                  snapshot.data ?? '',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                  ),
+                                  trimLines: 2,
+                                  colorClickableText: Colors.pink,
+                                  trimMode: TrimMode.Line,
+                                  trimCollapsedText: 'Show more',
+                                  trimExpandedText: 'Show less',
+                                  moreStyle: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold),
+                                );
+                              }
+                            },
+                          ),
+                        ),
+                        SizedBox(height: 8),
+                        ListView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: min(3, cocktails.length),
+                          itemBuilder: (context, innerIndex) {
+                            Cocktail cocktail = cocktails[innerIndex];
+                            return Slidable(
+                              key: const ValueKey(0),
+                              endActionPane: ActionPane(
+                                motion: ScrollMotion(),
+                                children: [
+                                  SlidableAction(
+                                    flex: 1,
+                                    backgroundColor: Colors.redAccent,
+                                    foregroundColor: Colors.white,
+                                    onPressed: (context) {
+                                      ListsService.removeCocktailFromList(
+                                          listNames[index], cocktail);
+                                      setState(() {});
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                              content: Text(
+                                                  'Removed cocktail ${cocktail.cocktailID} from list (${listNames[index]})')));
+                                    },
+                                    label: 'Remove',
+                                    icon: Icons.delete,
+                                  ),
+                                ],
+                              ),
+                              child: ListTile(
+                                leading: CircleAvatar(
+                                  backgroundImage: NetworkImage(
+                                    cocktail.strImageURL,
+                                  ),
+                                ),
+                                title: Text(
+                                  cocktail.strCocktailName,
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                subtitle: Text(
+                                  cocktail.strCategory,
+                                ),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          CocktailCardPage(cocktail: cocktail),
+                                    ),
+                                  );
+                                },
+                              ),
+                            );
+                          },
+                        ),
+                        SizedBox(height: 16),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => GridCocktails(
+                                          cocktail_list: cocktails)),
+                                );
+                              },
+                              child: Text('View all'),
+                            )
+                          ],
+                        ),
+                      ],
+                    );
+                  },
+                );
+              }
             },
-          );
-        }
-      },
+          ),
+        ),
+        Column(
+          children: [
+            Text(
+              'Want to create a new list?',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                // handle button press
+              },
+              child: Text(
+                'New List',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }

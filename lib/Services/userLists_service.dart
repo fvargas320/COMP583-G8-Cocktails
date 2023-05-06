@@ -116,13 +116,14 @@ class ListsService {
 
   static Future<void> removeCocktailFromList(
       String listName, Cocktail cocktail) async {
-    final userId = FirebaseAuth.instance.currentUser?.uid;
     await FirebaseFirestore.instance
-        .collection("User Lists")
-        .doc(userId)
-        .collection(listName)
-        .doc(cocktail.cocktailID)
-        .delete();
+        .collection('User Lists')
+        .doc(FirebaseAuth.instance.currentUser?.uid)
+        .collection('Lists')
+        .doc(listName)
+        .update({
+      'cocktailIDs': FieldValue.arrayRemove([cocktail.cocktailID])
+    });
   }
 
   static Future<void> deleteEntireList(String listName) async {

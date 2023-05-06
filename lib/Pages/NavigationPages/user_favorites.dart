@@ -139,20 +139,6 @@ class _FavoritesPageState extends State<FavoritesPage> {
     );
   }
 
-  Future<void> createAList(String listName, String listDescription) async {
-    ListsService.createList(listName, listDescription, context);
-  }
-
-  Future<void> removeAList(String listName) async {
-    ListsService.deleteEntireList(listName);
-    Navigator.of(context).pop();
-
-    setState(() {
-      //isLiked = false;
-      _showListDialog();
-    });
-  }
-
   Future<void> _showListDialog() async {
     final userId = FirebaseAuth.instance.currentUser?.uid;
     final listsSnapshot = await FirebaseFirestore.instance
@@ -248,10 +234,9 @@ class _FavoritesPageState extends State<FavoritesPage> {
             TextButton(
               child: const Text('Submit'),
               onPressed: () {
+                Navigator.of(context).pop();
                 handlingMultipleSelections(selectedLists, selectedCocktail);
                 //handlingAddingCocktail("popp", cocktail),
-
-                Navigator.of(context).pop();
               },
             ),
           ],
@@ -259,14 +244,6 @@ class _FavoritesPageState extends State<FavoritesPage> {
       },
     );
   }
-
-  // void handlingAddingCocktail(
-  //   String listName,
-  //   Cocktail cocktail,
-  // ) {
-  //   _showListDialog();
-  //   ListsService.addCocktailToList(listName, cocktail, context);
-  // }
 
   void handlingMultipleSelections(
       List<dynamic> selectedLists, Cocktail cocktail) {
@@ -333,6 +310,22 @@ class _FavoritesPageState extends State<FavoritesPage> {
         },
       );
     }
+  }
+
+  Future<void> createAList(String listName, String listDescription) async {
+    //keep
+    ListsService.createList(listName, listDescription, context);
+  }
+
+  Future<void> removeAList(String listName) async {
+    // keep
+    ListsService.deleteEntireList(listName);
+    Navigator.of(context).pop();
+
+    setState(() {
+      //isLiked = false;
+      _showListDialog();
+    });
   }
 
   @override
