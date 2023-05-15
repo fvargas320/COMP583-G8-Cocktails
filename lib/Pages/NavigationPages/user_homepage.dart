@@ -67,6 +67,7 @@ class _UserHomepageState extends State<UserHomepage>
         .where("Categories", isEqualTo: "Light & Skinny")
         .get();
     cocktailRecords(cocktails, listOfAllCocktails);
+
   }
 
   cocktailRecords(QuerySnapshot<Map<String, dynamic>> cocktails,
@@ -132,6 +133,7 @@ class _UserHomepageState extends State<UserHomepage>
     getCocktailsFirestores();
     super.initState();
     _controller = AnimationController(vsync: this);
+
   }
 
   @override
