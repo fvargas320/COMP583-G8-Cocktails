@@ -291,34 +291,14 @@ class _FavoritesPageState extends State<FavoritesPage> {
       for (var listName in selectedLists) {
         ListsService.addCocktailToList(listName, cocktail, context);
       }
-
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text('Success'),
-            content: Text('Cocktail added to multiple lists'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: Text('OK'),
-              ),
-            ],
-          );
-        },
-      );
     }
   }
 
   Future<void> createAList(String listName, String listDescription) async {
-    //keep
     ListsService.createList(listName, listDescription, context);
   }
 
   Future<void> removeAList(String listName) async {
-    // keep
     ListsService.deleteEntireList(listName);
     Navigator.of(context).pop();
 

@@ -32,7 +32,7 @@ class RecommendationsTab {
           'model': 'related-products',
           'objectID': cocktail_ID,
           'threshold': 0,
-          'maxRecommendations': 5,
+          'maxRecommendations': 3,
         }
       ]
     };
@@ -134,30 +134,13 @@ class _AlgoliaRecommendationWidgetState
     return finalCocktailList;
   }
 
-  //bool isLiked = false;
+  bool isLiked = false;
 
   @override
   void initState() {
     super.initState();
     _fetchFavorites();
     _loadRecommendations();
-  }
-
-  bool _isCocktailInFavorites(Cocktail cocktail) {
-    return _favoriteCocktails.any((c) => c.cocktailID == cocktail.cocktailID);
-  }
-
-  void _toggleFavorite(Cocktail cocktail) {
-    setState(() {
-      if (_isCocktailInFavorites(cocktail)) {
-        _favoriteCocktails
-            .removeWhere((c) => c.cocktailID == cocktail.cocktailID);
-        FavoritesService.removeFromFavorites(cocktail);
-      } else {
-        _favoriteCocktails.add(cocktail);
-        FavoritesService.addToFavorites(cocktail);
-      }
-    });
   }
 
   Future<void> _showCreateListDialog() async {
@@ -271,14 +254,27 @@ class _AlgoliaRecommendationWidgetState
     );
   }
 
-  Future<bool> addToFavoritesCallback(Cocktail cocktail) async {
-    final isLiked = await FavoritesService.checkIfLiked(cocktail.cocktailID);
+  Future<bool> _checkIfLiked(Cocktail cocktail) async {
+    final isFavorite = await FavoritesService.checkIfLiked(cocktail.cocktailID);
 
+    setState(() {
+      isLiked = isFavorite;
+    });
+
+    return isLiked;
+  }
+
+  Future<bool> addToFavoritesCallback(bool isLiked, Cocktail cocktail) async {
+    _checkIfLiked(cocktail);
+    // isLiked = _checkIfLiked(cocktail) as bool;
     if (isLiked) {
       FavoritesService.removeFromFavorites(cocktail);
     } else {
       FavoritesService.addToFavorites(cocktail);
     }
+    setState(() {
+      this.isLiked = !isLiked;
+    });
     return !isLiked;
   }
 
@@ -391,12 +387,12 @@ class _AlgoliaRecommendationWidgetState
                                                 backgroundColor:
                                                     Colors.blueAccent,
                                                 foregroundColor: Colors.white,
-                                                icon: _isCocktailInFavorites(
-                                                        recommendedCocktail)
+                                                icon: isLiked
                                                     ? Icons.favorite
                                                     : Icons.favorite_border,
                                                 onPressed: (context) =>
-                                                    _toggleFavorite(
+                                                    addToFavoritesCallback(
+                                                        isLiked,
                                                         recommendedCocktail),
 
                                                 label: 'Favorite',

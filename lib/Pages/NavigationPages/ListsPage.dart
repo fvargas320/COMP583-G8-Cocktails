@@ -18,6 +18,8 @@ class ListsPage extends StatefulWidget {
 
 class ListsPageWidget extends State<ListsPage> {
   late List<String> listNames;
+  final _listNameController = TextEditingController();
+  final _listDescriptionController = TextEditingController();
 
   @override
   void initState() {
@@ -106,6 +108,69 @@ class ListsPageWidget extends State<ListsPage> {
     return cocktail;
   }
 
+  Future<void> _showEditListDialog(String currentListName) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: true, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Updating List'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Please fill in data for list.'),
+                Padding(padding: const EdgeInsets.symmetric(vertical: 8.0)),
+                TextField(
+                  controller: _listNameController,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(color: Colors.deepPurple),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    hintText: 'Enter a List Name',
+                  ),
+                ),
+                Padding(padding: const EdgeInsets.symmetric(vertical: 8.0)),
+                TextField(
+                  controller: _listDescriptionController,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintText: 'Enter a description for list',
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Back'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Edit List'),
+              onPressed: () {
+                //Call Create List
+                ListsService.updateListDetails(
+                    currentListName,
+                    _listNameController.text.trim(),
+                    _listDescriptionController.text.trim(),
+                    context);
+                Navigator.of(context).pop();
+                setState(() {
+                  //isLiked = false;
+                  //_showListDialog();
+                });
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -165,6 +230,7 @@ class ListsPageWidget extends State<ListsPage> {
                                 onSelected: (value) {
                                   if (value == 'edit') {
                                     // handle edit menu option
+                                    _showEditListDialog(listNames[index]);
                                   } else if (value == 'delete') {
                                     showDialog(
                                       context: context,

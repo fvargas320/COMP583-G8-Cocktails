@@ -202,4 +202,53 @@ class ListsService {
 
     return cocktailIDs;
   }
+
+  static Future<void> updateListDetails(String listName, String newName,
+      String newDesc, BuildContext context) async {
+    final listDoc = FirebaseFirestore.instance
+        .collection('User Lists')
+        .doc(FirebaseAuth.instance.currentUser?.uid)
+        .collection('Lists')
+        .doc(listName);
+
+    final existingData = await listDoc.get();
+    final existingName = existingData.get('listName');
+    final existingDesc = existingData.get('listDesc');
+
+    if (existingName == newName && existingDesc == newDesc) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Nothing was changed"),
+            actions: [
+              TextButton(
+                child: Text("OK"),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      await FirebaseFirestore.instance.runTransaction((transaction) async {
+        transaction.update(listDoc, {
+          'listName': newName,
+          'listDesc': newDesc,
+        });
+
+        if (existingName != newName) {
+          final newListDoc = FirebaseFirestore.instance
+              .collection('User Lists')
+              .doc(FirebaseAuth.instance.currentUser?.uid)
+              .collection('Lists')
+              .doc(newName);
+
+          await transaction.set(newListDoc, existingData.data());
+
+          await listDoc.delete();
+        }
+      });
+    }
+  }
 }
