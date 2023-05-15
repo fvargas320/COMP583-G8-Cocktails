@@ -1,3 +1,4 @@
+import 'package:drinkly_cocktails/Pages/NavigationPages/FavoritesListsTab.dart';
 import 'package:drinkly_cocktails/Pages/NavigationPages/user_homepage.dart';
 import 'package:drinkly_cocktails/Pages/NavigationPages/user_recommend.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -30,7 +31,7 @@ class _MyHomePageState extends State<MyHomePage> {
   static List<Widget> _widgetOptions = <Widget>[
     UserHomepage(),
     FinderPage(),
-    FavoritesPage(),
+    FavoritesListTab(),
     SettingsPage(),
   ];
 
